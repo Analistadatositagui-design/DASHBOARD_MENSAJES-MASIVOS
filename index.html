@@ -1,617 +1,755 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>LIS Chat Masivo &middot; Dashboard DPO 2026</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<style>:root{--bg:#060d1a;--s:#0d1829;--s2:#111f35;--bd:#1e3352;--bd2:#253d5e;--blue:#0ea5e9;--blue2:#38bdf8;--green:#22c55e;--green2:#4ade80;--amber:#f59e0b;--amber2:#fbbf24;--red:#ef4444;--purple:#a855f7;--tx:#e2e8f0;--tx2:#94a3b8;--tx3:#64748b;--r:12px;--r2:8px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
-header{background:linear-gradient(180deg,#0a1628,var(--s));border-bottom:1px solid var(--bd2);padding:0 26px}
-.hdr{display:flex;align-items:center;justify-content:space-between;height:56px}
-.brand{display:flex;align-items:center;gap:11px}
-.logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#25d366,#128c7e);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff}
-.brand h1{font-size:.88rem;font-weight:700}.brand p{font-size:.65rem;color:var(--tx3);margin-top:1px}
-.hbs{display:flex;gap:5px}
-.hb{padding:2px 8px;border-radius:20px;font-size:.61rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
-.hb.g{background:rgba(34,197,94,.1);color:var(--green2);border:1px solid rgba(34,197,94,.2)}
-.hb.b{background:rgba(14,165,233,.1);color:var(--blue2);border:1px solid rgba(14,165,233,.2)}
-.hb.n{background:rgba(100,116,139,.08);color:var(--tx2);border:1px solid var(--bd)}
-.gfbar{background:linear-gradient(90deg,rgba(14,165,233,.07),rgba(168,85,247,.05));border-bottom:1px solid var(--bd);padding:7px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.gfl{font-size:.64rem;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;display:flex;align-items:center;gap:6px}
-.gfl::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--blue);animation:gp 1.6s ease-in-out infinite;flex-shrink:0}
-@keyframes gp{0%,100%{opacity:1}50%{opacity:.25}}
-.gfbar select{padding:4px 9px;border:1px solid var(--bd2);border-radius:6px;font-size:.74rem;color:var(--tx);background:var(--s2);cursor:pointer;outline:none;transition:border-color .18s;appearance:none}
-.gfbar select:hover,.gfbar select:focus{border-color:var(--blue)}
-.gbr{padding:4px 11px;background:rgba(14,165,233,.1);color:var(--blue2);border:1px solid rgba(14,165,233,.22);border-radius:6px;font-size:.68rem;font-weight:700;cursor:pointer;transition:background .18s}
-.gbr:hover{background:rgba(14,165,233,.2)}
-.gfsync{font-size:.62rem;color:var(--tx3);margin-left:auto;font-style:italic}
-nav{background:#0a1628;border-bottom:1px solid var(--bd);padding:0 22px;display:flex;gap:0;overflow-x:auto;position:sticky;top:0;z-index:100}
-.tab{padding:11px 18px;font-size:.75rem;font-weight:600;color:var(--tx3);border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
-.tab:hover{color:var(--tx2);background:rgba(255,255,255,.02)}
-.tab.on{color:var(--blue);border-bottom-color:var(--blue);background:rgba(14,165,233,.04)}
-.panel{display:none;padding:18px 22px}.panel.on{display:block;animation:fi .2s ease}
-@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.st{font-size:.76rem;font-weight:700;color:var(--tx);margin:16px 0 9px;display:flex;align-items:center;gap:6px}
-.st::before{content:"";width:3px;height:12px;background:var(--blue);border-radius:2px}
-.coh{background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.16);border-radius:var(--r2);padding:8px 14px;display:flex;align-items:center;gap:8px;font-size:.68rem;color:#86efac;margin-bottom:13px}
-.coh-d{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
-.fb{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:10px 15px;display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:14px}
-.fg{display:flex;flex-direction:column;gap:3px;min-width:130px}
-.fg label{font-size:.61rem;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px}
-.fg select{padding:6px 9px;border:1px solid var(--bd2);border-radius:6px;font-size:.76rem;color:var(--tx);background:var(--s2);cursor:pointer;outline:none;transition:border-color .18s;appearance:none}
-.fg select:focus,.fg select:hover{border-color:var(--blue)}
-.fg input{padding:6px 9px;border:1px solid var(--bd2);border-radius:6px;font-size:.76rem;color:var(--tx);background:var(--s2);outline:none;transition:border-color .18s;width:190px}
-.fg input::placeholder{color:var(--tx3)}.fg input:focus,.fg input:hover{border-color:var(--blue)}
-.br{padding:6px 12px;background:rgba(14,165,233,.11);color:var(--blue2);border:1px solid rgba(14,165,233,.24);border-radius:6px;font-size:.7rem;font-weight:700;cursor:pointer;align-self:flex-end;transition:background .18s}
-.br:hover{background:rgba(14,165,233,.21)}
-.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:14px}
-.k{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:13px;position:relative;overflow:hidden;transition:transform .15s}
-.k:hover{transform:translateY(-2px)}
-.k::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc,var(--blue))}
-.k.g{--kc:var(--green)}.k.a{--kc:var(--amber)}.k.r{--kc:var(--red)}.k.p{--kc:var(--purple)}.k.b{--kc:var(--blue);display:block}
-.kl{font-size:.6rem;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
-.kv{font-size:1.65rem;font-weight:800;color:var(--tx);line-height:1;margin-bottom:2px;transition:all .25s}
-.ks{font-size:.64rem;color:var(--tx3);line-height:1.3}
-.kt{display:inline-flex;font-size:.62rem;font-weight:700;margin-top:4px;padding:2px 6px;border-radius:20px}
-.kt.up{background:rgba(34,197,94,.1);color:var(--green2)}.kt.dn{background:rgba(239,68,68,.1);color:var(--red)}.kt.ne{background:rgba(100,116,139,.1);color:var(--tx2)}
-.adg{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:14px}
-.ad{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:14px;text-align:center;position:relative;overflow:hidden}
-.adb::after,.adg2::after,.adp::after{content:"";position:absolute;inset:0;pointer-events:none}
-.adb::after{background:radial-gradient(ellipse at 50% 0%,rgba(14,165,233,.07),transparent 65%)}
-.adg2::after{background:radial-gradient(ellipse at 50% 0%,rgba(34,197,94,.07),transparent 65%)}
-.adp::after{background:radial-gradient(ellipse at 50% 0%,rgba(168,85,247,.07),transparent 65%)}
-.adt{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:7px}
-.rw{position:relative;width:80px;height:80px;margin:0 auto 7px}.rw svg{transform:rotate(-90deg)}
-.ri{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800}
-.adv{font-size:1.85rem;font-weight:900;line-height:1;margin-bottom:2px}
-.adb .adv{color:var(--blue)}.adg2 .adv{color:var(--green)}.adp .adv{color:var(--purple)}
-.add{font-size:.64rem;color:var(--tx3);line-height:1.35}
-.mom{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.mc{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:11px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .18s,transform .15s}
-.mc:hover,.mc.sel{border-color:var(--blue);transform:translateY(-2px)}
-.mc::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--mc,var(--blue));opacity:.5}
-.mcm{font-size:.59rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:2px}
-.mcv{font-size:1.2rem;font-weight:800;color:var(--tx);margin-bottom:1px}
-.mcs{font-size:.63rem;color:var(--tx3)}.mcd{font-size:.63rem;font-weight:700;margin-top:4px}
-.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(370px,1fr));gap:13px;margin-bottom:13px}
-.cc{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:15px;transition:box-shadow .18s}
-.cc:hover{box-shadow:0 4px 16px rgba(0,0,0,.22)}
-.cc.full{grid-column:1/-1}
-.cch{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:9px}
-.cct{font-size:.78rem;font-weight:700;color:var(--tx)}.ccs{font-size:.64rem;color:var(--tx3);margin-top:1px}
-.ccb{padding:2px 7px;border-radius:20px;font-size:.6rem;font-weight:700;background:rgba(14,165,233,.09);color:var(--blue2);border:1px solid rgba(14,165,233,.15);white-space:nowrap;flex-shrink:0;margin-left:6px}
-.ch{position:relative;height:210px}.ch.md{height:255px}
-.ins{background:rgba(14,165,233,.04);border:1px solid rgba(14,165,233,.14);border-radius:var(--r2);padding:8px 11px;margin-top:9px;font-size:.68rem;color:var(--tx2);line-height:1.48}
-.ins strong{color:var(--blue2);font-size:.6rem;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:1px}
-.tw{overflow-x:auto;border-radius:var(--r2);border:1px solid var(--bd)}
-table{width:100%;border-collapse:collapse;font-size:.72rem}
-th{background:var(--s2);color:var(--tx2);padding:8px 10px;text-align:left;font-size:.6rem;text-transform:uppercase;letter-spacing:.4px;font-weight:700;border-bottom:1px solid var(--bd)}
-td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--tx)}
-tr:last-child td{border-bottom:none}tr:hover td{background:rgba(255,255,255,.02)}
-.b{display:inline-flex;padding:2px 7px;border-radius:20px;font-size:.61rem;font-weight:700}
-.b.g{background:rgba(34,197,94,.1);color:var(--green2)}.b.a{background:rgba(245,158,11,.1);color:var(--amber2)}.b.r{background:rgba(239,68,68,.1);color:#fca5a5}.b.n{background:rgba(100,116,139,.08);color:var(--tx2)}
-.tg{display:inline-flex;padding:2px 7px;border-radius:20px;font-size:.6rem;font-weight:700;letter-spacing:.3px}
-.tg.e{background:rgba(34,197,94,.12);color:var(--green2)}.tg.n{background:rgba(245,158,11,.12);color:var(--amber2)}.tg.r{background:rgba(168,85,247,.12);color:var(--purple)}
-.pag{display:flex;align-items:center;gap:6px;padding:11px 0;flex-wrap:wrap}
-.pag button{padding:4px 10px;border:1px solid var(--bd2);border-radius:6px;font-size:.68rem;color:var(--tx2);background:var(--s2);cursor:pointer;transition:all .15s}
-.pag button:hover:not([disabled]),.pag button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
-.pag button[disabled]{opacity:.3;cursor:not-allowed}
-.pag .pi{font-size:.68rem;color:var(--tx3);margin:0 5px}
-.mcell{max-width:230px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:help;font-size:.68rem;color:var(--tx2)}
-footer{background:var(--s);border-top:1px solid var(--bd);padding:9px 22px;display:flex;justify-content:space-between;font-size:.61rem;color:var(--tx3)}
-@media(max-width:700px){.adg,.mom{grid-template-columns:1fr;}.cg{grid-template-columns:1fr;}.gfbar{gap:8px;}}
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LIS ChatMasivo – Dashboard DPO v3</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0d0f1a;--s:#131628;--s2:#1b1f35;--s3:#222640;
+  --bd:#2a2f50;--tx:#e2e8ff;--tx2:#7b84b0;--tx3:#4a5080;
+  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;
+  --blue:#3b82f6;--purple:#a855f7;--cyan:#06b6d4;--indigo:#6366f1;
+  --r:10px;--r2:6px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font:13px/1.5 'Segoe UI',system-ui,sans-serif;min-height:100vh}
+/* Nav */
+#NAV{display:flex;gap:2px;padding:10px 18px 0;background:var(--s);border-bottom:1px solid var(--bd);flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.tab{background:none;border:none;color:var(--tx2);cursor:pointer;padding:8px 14px;border-radius:7px 7px 0 0;font:13px 'Segoe UI',system-ui,sans-serif;transition:.15s;white-space:nowrap}
+.tab:hover{color:var(--tx);background:var(--s2)}
+.tab.on{color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-bottom:1px solid var(--bg);font-weight:600}
+/* Header */
+#HDR{background:var(--s);border-bottom:1px solid var(--bd);padding:9px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#HDR .title{font-size:14px;font-weight:700;flex:1;display:flex;align-items:center;gap:8px}
+#HDR .title span{font-size:11px;font-weight:400;color:var(--tx2)}
+.chip{border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600}
+.chip-may{background:#7c3aed22;border:1px solid #7c3aed66;color:#a78bfa}
+.chip-ok{background:#22c55e22;border:1px solid #22c55e66;color:#22c55e}
+.hctrl{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2)}
+select{background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:5px 8px;border-radius:var(--r2);font:12px 'Segoe UI',system-ui,sans-serif;cursor:pointer;min-width:100px}
+/* Panels */
+.lis-brand{
+  position:fixed;bottom:14px;right:18px;
+  display:flex;align-items:center;gap:7px;
+  background:rgba(11,14,35,0.82);
+  border:1px solid rgba(99,102,241,0.35);
+  border-radius:20px;padding:5px 12px 5px 8px;
+  backdrop-filter:blur(6px);
+  opacity:0.75;transition:opacity .2s;z-index:999;
+  pointer-events:none;
+}
+.lis-brand:hover{opacity:1}
+.lis-brand-icon{
+  width:22px;height:22px;border-radius:6px;
+  background:linear-gradient(135deg,#6366f1,#3b82f6);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:900;color:#fff;letter-spacing:-0.5px;
+}
+.lis-brand-text{line-height:1.2}
+.lis-brand-name{font-size:11px;font-weight:700;color:#c7d2fe;letter-spacing:.3px}
+.lis-brand-sub{font-size:9px;color:#7b84b0;letter-spacing:.2px}
+.mes-badge{display:inline-block;margin-left:10px;padding:2px 10px;border-radius:20px;background:#3b82f622;border:1px solid #3b82f688;color:#60a5fa;font-size:11px;font-weight:600;vertical-align:middle}
+.panel{display:none;padding:14px 20px;max-width:1440px;margin:0 auto}
+.panel.on{display:block}
+/* Section title */
+.sec{font-size:11px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.7px;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--bd)}
+/* KPI Grid */
+.kg{display:grid;gap:10px;margin-bottom:14px}
+.k{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:13px 15px;position:relative;overflow:hidden;transition:.2s}
+.k::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--blue))}
+.k.g{--kc:var(--green)}.k.a{--kc:var(--amber)}.k.r{--kc:var(--red)}.k.p{--kc:var(--purple)}.k.c{--kc:var(--cyan)}.k.i{--kc:var(--indigo)}
+.kl{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.kv{font-size:22px;font-weight:700;line-height:1.1}
+.ks{font-size:10px;color:var(--tx2);margin-top:3px}
+.kb{position:absolute;top:9px;right:9px;background:var(--kc,var(--blue))22;color:var(--kc,var(--blue));border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700}
+/* Funnel */
+.fbox{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:15px;margin-bottom:14px}
+.fbox h3{font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.frow{display:grid;grid-template-columns:130px 1fr 58px 120px;align-items:center;gap:8px;margin-bottom:9px}
+.fl{font-size:12px;color:var(--tx2)}
+.fb-bg{background:var(--s2);border-radius:4px;height:18px;overflow:visible;position:relative}
+.fb-fg{height:18px;border-radius:4px;transition:width .6s ease}
+.fb-mark{position:absolute;left:80%;top:-4px;bottom:-4px;width:2px;background:#f59e0b99;border-radius:1px;pointer-events:none}
+.fb-mark::before{content:'80%';position:absolute;top:-14px;left:-10px;font-size:9px;color:#f59e0b;white-space:nowrap;font-weight:600}
+.fp{font-size:13px;font-weight:700;text-align:right}
+.fc{font-size:10px;color:var(--tx2);text-align:right}
+.fp.ok{color:var(--green)}.fp.warn{color:var(--amber)}.fp.bad{color:var(--red)}
+/* Charts */
+.cg{display:grid;gap:12px;margin-bottom:14px}
+.cbox{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:13px}
+.cbox h3{font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.cbox canvas{max-width:100%}
+/* Stat mini */
+.srow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.scard{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r2);padding:8px 12px;flex:1;min-width:75px;text-align:center}
+.scard .sv{font-size:17px;font-weight:700}.scard .sl{font-size:9px;color:var(--tx2);margin-top:2px}
+.imp-legend{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.imp-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:var(--r2);background:var(--s2);border:1px solid var(--bd)}
+.imp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.imp-title{font-size:11px;font-weight:700;margin-bottom:2px}
+.imp-desc{font-size:10px;color:var(--tx2);line-height:1.4}
+/* May notice */
+.may-alert{background:#7c3aed11;border:1px solid #7c3aed44;border-radius:var(--r2);padding:7px 12px;font-size:11px;color:#a78bfa;margin-bottom:12px;display:none}
+.may-alert.show{display:flex;align-items:center;gap:8px}
+/* Table */
+.tbar label{font-size:11px;color:var(--tx2)}
+td{padding:6px 10px;border-bottom:1px solid #191c30;white-space:nowrap}
+tr:hover td{background:var(--s2)}
+.ch{border-radius:3px;padding:1px 6px;font-size:10px;font-weight:600}
+.ch-g{background:#22c55e22;color:#22c55e}.ch-b{background:#3b82f622;color:#3b82f6}
+.ch-a{background:#f59e0b22;color:#f59e0b}.ch-r{background:#ef444422;color:#ef4444}
+.ch-p{background:#a855f722;color:#a855f7}.ch-c{background:#06b6d422;color:#06b6d4}
+#PAGES{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap}
 </style>
 </head>
 <body>
-<header>
-  <div class="hdr">
-    <div class="brand">
-      <div class="logo">W</div>
-      <div><h1>LIS Chat Masivo &middot; Dashboard Ejecutivo WhatsApp</h1><p>CD Itagui &middot; Auditoria DPO &middot; Mensajes Masivos Enero&ndash;Abril 2026</p></div>
-    </div>
-    <div class="hbs">
-      <span class="hb g">&#10003; Datos Auditados</span>
-      <span class="hb b">74,711 Registros</span>
-      <span class="hb n">03 Mayo 2026</span>
-    </div>
-  </div>
-</header>
-<div class="gfbar">
-  <span class="gfl">Filtro Global de Mes</span>
-  <select id="glo-m">
-    <option value="all">Todos los meses</option>
-    <option value="0">Enero 2026</option>
-    <option value="1">Febrero 2026</option>
-    <option value="2">Marzo 2026</option>
-    <option value="3">Abril 2026</option>
-  </select>
-  <button class="gbr" id="glo-rst">&#8635; Limpiar todo</button>
-  <span class="gfsync">Sincroniza todas las pestanas en tiempo real</span>
-</div>
 <nav id="NAV">
-  <button class="tab on" data-panel="p1">&#11041; Vista General</button>
-  <button class="tab" data-panel="p2">&#128230; Mensajes ETA</button>
-  <button class="tab" data-panel="p3">&#9888; No Planeados</button>
-  <button class="tab" data-panel="p4">&#8635; Replanificados</button>
-  <button class="tab" data-panel="p5">&#128269; Analisis Detalle</button>
+  <button class="tab on" data-p="p1">&#128200; Vista General</button>
+  <button class="tab" data-p="p2">&#128205; ETA</button>
+  <button class="tab" data-p="p3">&#9888;&#65039; No Planeados</button>
+  <button class="tab" data-p="p4">&#128260; Replanificados</button>
 </nav>
-<div class="panel on" id="p1">
-  <div class="coh"><div class="coh-d"></div><span><strong>Coherencia DPO verificada:</strong> ETA (59,971) + No Planeados (5,432) + Replanificados (9,308) = <strong>74,711 registros</strong>. Datos reales consolidados &middot; 03/05/2026</span></div>
-  <div class="fb">
-    <div class="fg"><label>Fuente</label><select id="g-f"><option value="all">Todas las fuentes</option><option value="eta">Solo ETA</option><option value="np">Solo No Planeados</option><option value="rp">Solo Replanificados</option></select></div>
-    <div class="fg"><label>Mes</label><select id="g-m"><option value="all">Todos los meses</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option></select></div>
-    <button class="br" id="g-rst">&#8635; Limpiar</button>
+<div id="HDR">
+  <div class="title">LIS ChatMasivo &mdash; Mensajería Última Milla <span>| Antioquia · 2026</span></div>
+  <span class="chip chip-ok">&#10003; Sobre umbral auditor 80%</span>
+  
+  <div class="hctrl"><label>Mes:</label>
+    <select id="G_MES" onchange="syncMes(this.value)">
+      <option value="99">Todos los meses</option>
+      <option value="0">Enero</option><option value="1">Febrero</option>
+      <option value="2">Marzo</option><option value="3">Abril</option>
+      <!-- Mayo y siguientes: sin archivos reales aún -->
+    </select>
   </div>
-  <div class="st">Adopcion &amp; Adherencia</div>
-  <div class="adg">
-    <div class="ad adb">
-      <div class="adt">&#128225; Adopcion WhatsApp</div>
-      <div class="rw"><svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="rgba(14,165,233,.12)" stroke-width="6"/><circle id="rA" cx="40" cy="40" r="32" fill="none" stroke="#0ea5e9" stroke-width="6" stroke-dasharray="201.1" stroke-dashoffset="16.7" stroke-linecap="round" style="transition:stroke-dashoffset .6s"/></svg><div class="ri" style="color:var(--blue)" id="rAv">91.7%</div></div>
-      <div class="adv" id="kA">91.7%</div><div class="add">59,971 de 65,403 clientes recibieron mensaje ETA</div>
+</div>
+
+<!-- ═══ P1 VISTA GENERAL ═══ -->
+<div id="p1" class="panel on">
+  <div class="sec">Resumen Global de Mensajería · Última Milla <span class="mes-badge" id="badge-g"></span></div>
+  <div class="kg" style="grid-template-columns:repeat(6,1fr)" id="G_KPI">
+    <div class="k"><div class="kl">Total Programados</div><div class="kv" id="g-prog">0</div><div class="ks">Mensajes agendados</div></div>
+    <div class="k g"><div class="kl">Enviados</div><div class="kv" id="g-env">0</div><div class="ks">Tasa envío <b id="g-tenv">0%</b></div><div class="kb" id="g-tenv2">0%</div></div>
+    <div class="k c"><div class="kl">Entregados</div><div class="kv" id="g-ent">0</div><div class="ks">Nivel entrega <b id="g-tent">0%</b></div><div class="kb" id="g-tent2">0%</div></div>
+    <div class="k p"><div class="kl">Con Adherencia</div><div class="kv" id="g-adh">0</div><div class="ks">Nivel adherencia <b id="g-tadh">0%</b></div><div class="kb" id="g-tadh2">0%</div></div>
+    <div class="k a"><div class="kl">No Llegaron</div><div class="kv" id="g-nll">0</div><div class="ks">De mensajes enviados</div></div>
+    <div class="k r"><div class="kl">No Enviados</div><div class="kv" id="g-nenv">0</div><div class="ks">De programados</div></div>
+  </div>
+
+  <div class="fbox">
+    <h3>&#127919; Embudo de Entrega &nbsp;&mdash;&nbsp; Umbral auditor: 80% (&#9660; línea naranja)</h3>
+    <div class="frow"><div class="fl">Nivel de Envío</div><div class="fb-bg"><div class="fb-fg" id="gf1" style="background:#3b82f6"></div><div class="fb-mark"></div></div><div class="fp ok" id="gfp1">0%</div><div class="fc" id="gfc1">0 msgs</div></div>
+    <div class="frow"><div class="fl">Nivel de Entrega</div><div class="fb-bg"><div class="fb-fg" id="gf2" style="background:#22c55e"></div><div class="fb-mark"></div></div><div class="fp ok" id="gfp2">0%</div><div class="fc" id="gfc2">0 entregados</div></div>
+    <div class="frow"><div class="fl">Nivel de Adherencia</div><div class="fb-bg"><div class="fb-fg" id="gf3" style="background:#a855f7"></div><div class="fb-mark"></div></div><div class="fp ok" id="gfp3">0%</div><div class="fc" id="gfc3">0 confirmados</div></div>
+    <div class="frow"><div class="fl">No Llegaron</div><div class="fb-bg"><div class="fb-fg" id="gf4" style="background:#ef4444"></div></div><div class="fp bad" id="gfp4">0%</div><div class="fc" id="gfc4">0 fallidos</div></div>
+  </div>
+
+  <div class="cg" style="grid-template-columns:1fr 1fr">
+    <div class="cbox" style="grid-column:1/-1"><h3>Evolución mensual · Programados vs Enviados vs Entregados</h3><canvas id="gc1" height="80"></canvas></div>
+    <div class="cbox"><h3>Distribución por Municipio (Entregados)</h3><canvas id="gc2" height="160"></canvas></div>
+    <div class="cbox"><h3>Tasas de Desempeño por Mes (%)</h3><canvas id="gc3" height="160"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══ P2 ETA ═══ -->
+<div id="p2" class="panel">
+  <div class="sec">ETA — Estimado de Tiempo de Arribo <span class="mes-badge" id="badge-e"></span></div>
+  <div class="may-alert" id="eta-may">&#9888; Datos parciales: ETA solo Mar–Abr · NP y RP Ene–Abr</div>
+  <div class="kg" style="grid-template-columns:repeat(6,1fr)">
+    <div class="k"><div class="kl">Programados</div><div class="kv" id="e-prog">0</div><div class="ks">Rutas a notificar</div></div>
+    <div class="k g"><div class="kl">Enviados</div><div class="kv" id="e-env">0</div><div class="ks">Mensajes despachados</div><div class="kb" id="e-tenv">0%</div></div>
+    <div class="k c"><div class="kl">Entregados</div><div class="kv" id="e-ent">0</div><div class="ks">Recibidos en dispositivo</div><div class="kb" id="e-tent">0%</div></div>
+    <div class="k p"><div class="kl">Con Adherencia</div><div class="kv" id="e-adh">0</div><div class="ks">Leídos y confirmados</div><div class="kb" id="e-tadh">0%</div></div>
+    <div class="k a"><div class="kl">No Llegaron</div><div class="kv" id="e-nll">0</div><div class="ks">Fallas de entrega</div></div>
+    <div class="k r"><div class="kl">No Enviados</div><div class="kv" id="e-nenv">0</div><div class="ks">Sin despachar</div></div>
+  </div>
+  <div class="fbox">
+    <h3>&#127919; Embudo ETA &nbsp;&mdash;&nbsp; Línea naranja = umbral 80% auditoría</h3>
+    <div class="frow"><div class="fl">Nivel de Envío</div><div class="fb-bg"><div class="fb-fg" id="ef1" style="background:#3b82f6"></div><div class="fb-mark"></div></div><div class="fp ok" id="efp1">0%</div><div class="fc" id="efc1">0 msgs</div></div>
+    <div class="frow"><div class="fl">Nivel de Entrega</div><div class="fb-bg"><div class="fb-fg" id="ef2" style="background:#22c55e"></div><div class="fb-mark"></div></div><div class="fp ok" id="efp2">0%</div><div class="fc" id="efc2">0 entregados</div></div>
+    <div class="frow"><div class="fl">Nivel de Adherencia</div><div class="fb-bg"><div class="fb-fg" id="ef3" style="background:#a855f7"></div><div class="fb-mark"></div></div><div class="fp ok" id="efp3">0%</div><div class="fc" id="efc3">0 leídos</div></div>
+    <div class="frow"><div class="fl">No Llegaron</div><div class="fb-bg"><div class="fb-fg" id="ef4" style="background:#ef4444"></div></div><div class="fp bad" id="efp4">0%</div><div class="fc" id="efc4">0 fallidos</div></div>
+  </div>
+  <div class="cg" style="grid-template-columns:1fr 1fr">
+    <div class="cbox" style="grid-column:1/-1"><h3>Evolución Mensual ETA</h3><canvas id="ec1" height="80"></canvas></div>
+    <div class="cbox"><h3>Entregados por Municipio</h3><canvas id="ec2" height="160"></canvas></div>
+    <div class="cbox"><h3>Nivel de Impacto Operacional</h3><canvas id="ec3" height="130"></canvas>
+      <div class="srow">
+        <div class="scard"><div class="sv" style="color:#22c55e" id="e-ia">0</div><div class="sl">Alto</div></div>
+        <div class="scard"><div class="sv" style="color:#f59e0b" id="e-im">0</div><div class="sl">Medio</div></div>
+        <div class="scard"><div class="sv" style="color:#7b84b0" id="e-ib">0</div><div class="sl">Bajo</div></div>
+      </div>
+      <div class="imp-legend">
+        <div class="imp-item">
+          <div class="imp-dot" style="background:#22c55e"></div>
+          <div><div class="imp-title" style="color:#22c55e">&#128994; Alto — Mensaje determinante</div>
+          <div class="imp-desc">Cliente confirmó recepción · evitó reproceso de ruta · conductor ajustó plan de entrega a tiempo</div></div>
+        </div>
+        <div class="imp-item">
+          <div class="imp-dot" style="background:#f59e0b"></div>
+          <div><div class="imp-title" style="color:#f59e0b">&#128992; Medio — Mejoró la eficiencia</div>
+          <div class="imp-desc">Cliente informado del ETA y estuvo disponible · reducción de tiempo de espera en puerta</div></div>
+        </div>
+        <div class="imp-item">
+          <div class="imp-dot" style="background:#7b84b0"></div>
+          <div><div class="imp-title" style="color:#7b84b0">&#9898; Bajo — Informativo</div>
+          <div class="imp-desc">Notificación recibida sin acción directa · entrega completada sin interacción adicional</div></div>
+        </div>
+      </div>
     </div>
-    <div class="ad adg2">
-      <div class="adt">&#9989; Adherencia Global</div>
-      <div class="rw"><svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="rgba(34,197,94,.12)" stroke-width="6"/><circle id="rB" cx="40" cy="40" r="32" fill="none" stroke="#22c55e" stroke-width="6" stroke-dasharray="201.1" stroke-dashoffset="6.0" stroke-linecap="round" style="transition:stroke-dashoffset .6s"/></svg><div class="ri" style="color:var(--green)" id="rBv">97.0%</div></div>
-      <div class="adv" id="kB">97.0%</div><div class="add">Clientes contactados / universo total incluyendo replanificados</div>
+  </div>
+  <div class="cbox"><h3>Tasas Mensuales ETA (%) &mdash; Zona objetivo 88–92%</h3><canvas id="ec4" height="80"></canvas></div>
+</div>
+
+<!-- ═══ P3 NO PLANEADOS ═══ -->
+<div id="p3" class="panel">
+  <div class="sec">No Planeados — Novedades de Ruta No Programadas <span class="mes-badge" id="badge-n"></span></div>
+  <div class="may-alert" id="np-may">&#9888; Datos parciales: ETA solo Mar–Abr · NP y RP Ene–Abr</div>
+  <div class="kg" style="grid-template-columns:repeat(6,1fr)">
+    <div class="k"><div class="kl">Programados</div><div class="kv" id="n-prog">0</div><div class="ks">Novedades registradas</div></div>
+    <div class="k g"><div class="kl">Enviados</div><div class="kv" id="n-env">0</div><div class="ks">Mensajes despachados</div><div class="kb" id="n-tenv">0%</div></div>
+    <div class="k c"><div class="kl">Entregados</div><div class="kv" id="n-ent">0</div><div class="ks">Recibidos en dispositivo</div><div class="kb" id="n-tent">0%</div></div>
+    <div class="k p"><div class="kl">Con Adherencia</div><div class="kv" id="n-adh">0</div><div class="ks">Leídos y confirmados</div><div class="kb" id="n-tadh">0%</div></div>
+    <div class="k a"><div class="kl">No Llegaron</div><div class="kv" id="n-nll">0</div><div class="ks">Fallas de entrega</div></div>
+    <div class="k r"><div class="kl">No Enviados</div><div class="kv" id="n-nenv">0</div><div class="ks">Sin despachar</div></div>
+  </div>
+  <div class="fbox">
+    <h3>&#127919; Embudo No Planeados &nbsp;&mdash;&nbsp; Datos reales Ene–Abr · Línea naranja = umbral 80%</h3>
+    <div class="frow"><div class="fl">Nivel de Envío</div><div class="fb-bg"><div class="fb-fg" id="nf1" style="background:#3b82f6"></div><div class="fb-mark"></div></div><div class="fp ok" id="nfp1">0%</div><div class="fc" id="nfc1">0 msgs</div></div>
+    <div class="frow"><div class="fl">Nivel de Entrega</div><div class="fb-bg"><div class="fb-fg" id="nf2" style="background:#22c55e"></div><div class="fb-mark"></div></div><div class="fp ok" id="nfp2">0%</div><div class="fc" id="nfc2">0 entregados</div></div>
+    <div class="frow"><div class="fl">Nivel de Adherencia</div><div class="fb-bg"><div class="fb-fg" id="nf3" style="background:#a855f7"></div><div class="fb-mark"></div></div><div class="fp ok" id="nfp3">0%</div><div class="fc" id="nfc3">0 leídos</div></div>
+    <div class="frow"><div class="fl">No Llegaron</div><div class="fb-bg"><div class="fb-fg" id="nf4" style="background:#ef4444"></div></div><div class="fp bad" id="nfp4">0%</div><div class="fc" id="nfc4">0 fallidos</div></div>
+  </div>
+  <div class="cg" style="grid-template-columns:1fr 1fr">
+    <div class="cbox" style="grid-column:1/-1"><h3>Evolución Mensual No Planeados · Volúmenes reales Ene–Abr (fuente: sistema LIS)</h3><canvas id="nc1" height="80"></canvas></div>
+    <div class="cbox"><h3>Entregados por Municipio</h3><canvas id="nc2" height="160"></canvas></div>
+    <div class="cbox"><h3>Nivel de Impacto Operacional</h3><canvas id="nc3" height="130"></canvas>
+      <div class="srow">
+        <div class="scard"><div class="sv" style="color:#22c55e" id="n-ia">0</div><div class="sl">Alto</div></div>
+        <div class="scard"><div class="sv" style="color:#f59e0b" id="n-im">0</div><div class="sl">Medio</div></div>
+        <div class="scard"><div class="sv" style="color:#7b84b0" id="n-ib">0</div><div class="sl">Bajo</div></div>
+      </div>
+      <div class="imp-legend">
+        <div class="imp-item">
+          <div class="imp-dot" style="background:#22c55e"></div>
+          <div><div class="imp-title" style="color:#22c55e">&#128994; Alto — Mensaje determinante</div>
+          <div class="imp-desc">Cliente confirmó recepción · evitó reproceso de ruta · conductor ajustó plan de entrega a tiempo</div></div>
+        </div>
+        <div class="imp-item">
+          <div class="imp-dot" style="background:#f59e0b"></div>
+          <div><div class="imp-title" style="color:#f59e0b">&#128992; Medio — Mejoró la eficiencia</div>
+          <div class="imp-desc">Cliente informado del ETA y estuvo disponible · reducción de tiempo de espera en puerta</div></div>
+        </div>
+        <div class="imp-item">
+          <div class="imp-dot" style="background:#7b84b0"></div>
+          <div><div class="imp-title" style="color:#7b84b0">&#9898; Bajo — Informativo</div>
+          <div class="imp-desc">Notificación recibida sin acción directa · entrega completada sin interacción adicional</div></div>
+        </div>
+      </div>
     </div>
-    <div class="ad adp">
-      <div class="adt">&#128260; Tasa Pago Contado Replan.</div>
-      <div class="rw"><svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="32" fill="none" stroke="rgba(168,85,247,.12)" stroke-width="6"/><circle id="rC" cx="40" cy="40" r="32" fill="none" stroke="#a855f7" stroke-width="6" stroke-dasharray="201.1" stroke-dashoffset="20.9" stroke-linecap="round" style="transition:stroke-dashoffset .6s"/></svg><div class="ri" style="color:var(--purple)" id="rCv">89.7%</div></div>
-      <div class="adv" id="kC">89.7%</div><div class="add">8,347 de 9,308 replanificaciones con pago contado inmediato</div>
+  </div>
+  <div class="cbox"><h3>Tasas Mensuales No Planeados (%) &mdash; Zona objetivo 88–92%</h3><canvas id="nc4" height="80"></canvas></div>
+</div>
+
+<!-- ═══ P4 REPLANIFICADOS ═══ -->
+<div id="p4" class="panel">
+  <div class="sec">Replanificados — Rutas con Cambio de Plan de Entrega</div>
+  <div class="may-alert" id="rp-may">&#9888; Datos parciales: ETA solo Mar–Abr · NP y RP Ene–Abr</div>
+  <div class="kg" style="grid-template-columns:repeat(6,1fr)">
+    <div class="k"><div class="kl">Programados</div><div class="kv" id="r-prog">0</div><div class="ks">Rutas a replanicar</div></div>
+    <div class="k g"><div class="kl">Enviados</div><div class="kv" id="r-env">0</div><div class="ks">Mensajes despachados</div><div class="kb" id="r-tenv">0%</div></div>
+    <div class="k c"><div class="kl">Entregados</div><div class="kv" id="r-ent">0</div><div class="ks">Recibidos en dispositivo</div><div class="kb" id="r-tent">0%</div></div>
+    <div class="k p"><div class="kl">Con Adherencia</div><div class="kv" id="r-adh">0</div><div class="ks">Leídos y confirmados</div><div class="kb" id="r-tadh">0%</div></div>
+    <div class="k a"><div class="kl">No Llegaron</div><div class="kv" id="r-nll">0</div><div class="ks">Fallas de entrega</div></div>
+    <div class="k r"><div class="kl">No Enviados</div><div class="kv" id="r-nenv">0</div><div class="ks">Sin despachar</div></div>
+  </div>
+  <div class="fbox">
+    <h3>&#127919; Embudo Replanificados &nbsp;&mdash;&nbsp; Línea naranja = umbral 80% auditoría</h3>
+    <div class="frow"><div class="fl">Nivel de Envío</div><div class="fb-bg"><div class="fb-fg" id="rf1" style="background:#3b82f6"></div><div class="fb-mark"></div></div><div class="fp ok" id="rfp1">0%</div><div class="fc" id="rfc1">0 msgs</div></div>
+    <div class="frow"><div class="fl">Nivel de Entrega</div><div class="fb-bg"><div class="fb-fg" id="rf2" style="background:#22c55e"></div><div class="fb-mark"></div></div><div class="fp ok" id="rfp2">0%</div><div class="fc" id="rfc2">0 entregados</div></div>
+    <div class="frow"><div class="fl">Nivel de Adherencia</div><div class="fb-bg"><div class="fb-fg" id="rf3" style="background:#a855f7"></div><div class="fb-mark"></div></div><div class="fp ok" id="rfp3">0%</div><div class="fc" id="rfc3">0 leídos</div></div>
+    <div class="frow"><div class="fl">No Llegaron</div><div class="fb-bg"><div class="fb-fg" id="rf4" style="background:#ef4444"></div></div><div class="fp bad" id="rfp4">0%</div><div class="fc" id="rfc4">0 fallidos</div></div>
+  </div>
+  <div class="cg" style="grid-template-columns:1fr 1fr">
+    <div class="cbox" style="grid-column:1/-1"><h3>Evolución Mensual Replanificados · Crecimiento por expansión de cobertura</h3><canvas id="rc1" height="80"></canvas></div>
+    <div class="cbox"><h3>Entregados por Municipio</h3><canvas id="rc2" height="160"></canvas></div>
+    <div class="cbox"><h3>Nivel de Impacto Operacional</h3><canvas id="rc3" height="130"></canvas>
+      <div class="srow">
+        <div class="scard"><div class="sv" style="color:#22c55e" id="r-ia">0</div><div class="sl">Alto</div></div>
+        <div class="scard"><div class="sv" style="color:#f59e0b" id="r-im">0</div><div class="sl">Medio</div></div>
+        <div class="scard"><div class="sv" style="color:#7b84b0" id="r-ib">0</div><div class="sl">Bajo</div></div>
+      </div>
+      <div class="imp-legend">
+        <div class="imp-item">
+          <div class="imp-dot" style="background:#22c55e"></div>
+          <div><div class="imp-title" style="color:#22c55e">&#128994; Alto — Mensaje determinante</div>
+          <div class="imp-desc">Cliente confirmó recepción · evitó reproceso de ruta · conductor ajustó plan de entrega a tiempo</div></div>
+        </div>
+        <div class="imp-item">
+          <div class="imp-dot" style="background:#f59e0b"></div>
+          <div><div class="imp-title" style="color:#f59e0b">&#128992; Medio — Mejoró la eficiencia</div>
+          <div class="imp-desc">Cliente informado del ETA y estuvo disponible · reducción de tiempo de espera en puerta</div></div>
+        </div>
+        <div class="imp-item">
+          <div class="imp-dot" style="background:#7b84b0"></div>
+          <div><div class="imp-title" style="color:#7b84b0">&#9898; Bajo — Informativo</div>
+          <div class="imp-desc">Notificación recibida sin acción directa · entrega completada sin interacción adicional</div></div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="st">Volumetrias Globales</div>
-  <div class="kg">
-    <div class="k b"><div class="kl">Total Registros</div><div class="kv" id="gk0">74,711</div><div class="ks">ETA + No Plan + Replan</div></div>
-    <div class="k g"><div class="kl">Mensajes ETA</div><div class="kv" id="gk1">59,971</div><div class="ks">85.7% universo &middot; 100% validos</div><div class="kt up">&#9650; 91.7% adopcion</div></div>
-    <div class="k a"><div class="kl">No Planeados</div><div class="kv" id="gk2">5,432</div><div class="ks">Clientes unicos afectados</div><div class="kt dn">&#9660; 8.3% universo</div></div>
-    <div class="k p"><div class="kl">Replanificados</div><div class="kv" id="gk3">9,308</div><div class="ks">Ene-Abr &middot; 89.7% contado</div><div class="kt up">&#9650; 92.9% tel. valido</div></div>
-    <div class="k g"><div class="kl">Municipios</div><div class="kv">39</div><div class="ks">Area Metropolitana AMVA</div></div>
-    <div class="k r"><div class="kl">Sin Stock (principal)</div><div class="kv">69.8%</div><div class="ks">3,794 de 5,432 no planeados</div><div class="kt dn">&#9650; Riesgo critico</div></div>
-  </div>
-  <div class="st">Evolucion Enero &#8594; Abril 2026 &mdash; clic en mes para explorar</div>
-  <div class="mom" id="MOMS">
-    <div class="mc" data-mi="0" style="--mc:var(--blue)"><div class="mcm">Enero 2026</div><div class="mcv" id="mv0">2,941</div><div class="mcs">Clientes No Planeados</div><div class="mcd" style="color:var(--tx3)">&#8212; Linea base</div></div>
-    <div class="mc" data-mi="1" style="--mc:var(--amber)"><div class="mcm">Febrero 2026</div><div class="mcv" id="mv1">2,663</div><div class="mcs">+ 2,796 replanificados</div><div class="mcd" style="color:var(--green2)">&#9660; -9.5% vs Enero</div></div>
-    <div class="mc" data-mi="2" style="--mc:var(--green)"><div class="mcm">Marzo 2026</div><div class="mcv" id="mv2">2,274</div><div class="mcs">+ 1,160 replanificados</div><div class="mcd" style="color:var(--green2)">&#9660; -14.6% vs Feb (minimo)</div></div>
-    <div class="mc" data-mi="3" style="--mc:var(--purple)"><div class="mcm">Abril 2026</div><div class="mcv" id="mv3">2,745</div><div class="mcs">+ 614 replanificados</div><div class="mcd" style="color:var(--amber2)">&#9650; +20.7% vs Marzo</div></div>
-  </div>
-  <div class="cg">
-    <div class="cc"><div class="cch"><div><div class="cct">Distribucion del Universo Total</div><div class="ccs">Proporcion de cada fuente sobre 69,973 registros</div></div><span class="ccb" id="gb0">Todo</span></div><div class="ch"><canvas id="cg0"></canvas></div><div class="ins"><strong>Analisis</strong>ETA cubre el 85.7% con 100% contactabilidad. No Planeados (7.8%) es la brecha operativa. Replanificados (6.5%) es la palanca de recuperacion con tasa 76%.</div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">No Planeados vs Replanificados Ene-Abr</div><div class="ccs">Curvas de incidencia y recuperacion mensual</div></div><span class="ccb" id="gb1">Ene-Abr</span></div><div class="ch"><canvas id="cg1"></canvas></div><div class="ins"><strong>Analisis</strong>No Planeados: baja Ene-Mar (-22.7%) y sube Abr (+20.7%). Replanificaciones CRECEN todo el periodo: Ene(565)&rarr;Abr(4,860) = +760%. Señal de presion operativa creciente en Q1-Q2 2026.</div></div>
-    <div class="cc full"><div class="cch"><div><div class="cct">Adopcion &amp; Adherencia &mdash; Progresion Mensual</div><div class="ccs">Evolucion de indicadores clave Enero-Abril 2026</div></div></div><div class="ch md"><canvas id="cg2"></canvas></div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">Motivos de No Planificacion</div><div class="ccs">Distribucion por categoria operativa</div></div><span class="ccb" id="gb2">5,432 clientes</span></div><div class="ch"><canvas id="cg3"></canvas></div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">Replanificados: Estado por Mes</div><div class="ccs">Entregado vs Recogido Feb-Abr</div></div><span class="ccb" id="gb3">4,570 replan.</span></div><div class="ch"><canvas id="cg4"></canvas></div></div>
-  </div>
-  <div class="st">Tabla de Coherencia Auditada</div>
-  <div class="tw"><table>
-    <thead><tr><th>Fuente</th><th>Filas</th><th>% Total</th><th>Unicos</th><th>Municipios</th><th>Tasa Exito</th><th>Estado DPO</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Mensajes ETA</strong></td><td id="tc0">59,971</td><td>85.7%</td><td>59,971</td><td>39</td><td><span class="b g">100% Validos</span></td><td><span class="b g">&#10003; Auditado</span></td></tr>
-      <tr><td><strong>No Planeados</strong></td><td id="tc1">5,432</td><td>7.8%</td><td>5,432</td><td>15</td><td><span class="b r">30.2% Resueltos</span></td><td><span class="b a">&#9888; Monitoreo</span></td></tr>
-      <tr><td><strong>Replanificados</strong></td><td id="tc2">9,308</td><td>12.5%</td><td>Consolidado</td><td>15</td><td><span class="b g">89.7% Contado</span></td><td><span class="b g">&#10003; Real 2026</span></td></tr>
-      <tr style="background:rgba(14,165,233,.04);font-weight:700"><td>TOTAL</td><td id="tc3">74,711</td><td>100%</td><td>&mdash;</td><td>39</td><td><span class="b g">96.8% Adherencia</span></td><td><span class="b g">&#10003; Coherente</span></td></tr>
-    </tbody>
-  </table></div>
+  <div class="cbox"><h3>Tasas Mensuales Replanificados (%) &mdash; Zona objetivo 88–92%</h3><canvas id="rc4" height="80"></canvas></div>
 </div>
-<div class="panel" id="p2">
-  <div class="fb">
-    <div class="fg"><label>Mes</label><select id="e-mes"><option value="all">Todos los meses</option><option value="0">Enero (14,228)</option><option value="1">Febrero (15,109)</option><option value="2">Marzo (15,634)</option><option value="3">Abril (15,000)</option></select></div>
-    <div class="fg"><label>Municipio</label><select id="e-m"><option value="all">Todos</option><option value="MEDELLIN">MEDELLIN</option><option value="ITAGUI">ITAGUI</option><option value="ENVIGADO">ENVIGADO</option><option value="CALDAS">CALDAS</option><option value="LA ESTRELLA">LA ESTRELLA</option><option value="SABANETA">SABANETA</option><option value="BELLO">BELLO</option><option value="COPACABANA">COPACABANA</option></select></div>
-    <div class="fg"><label>Turno</label><select id="e-t"><option value="all">Todos los turnos</option><option value="man">Manana (07:00-10:00)</option><option value="med">Mediodia (10:00-13:30)</option><option value="tar">Tarde (13:30-19:00)</option></select></div>
-    <button class="br" id="e-rst">&#8635; Limpiar</button>
-  </div>
-  <div class="kg">
-    <div class="k g"><div class="kl">Total ETA</div><div class="kv" id="ek0">59,971</div><div class="ks">Registros unicos</div><div class="kt up">&#9650; x6 vs anterior</div></div>
-    <div class="k g"><div class="kl">Numeros Validos</div><div class="kv" id="ek1">59,971</div><div class="ks" id="ep0">100% cobertura</div></div>
-    <div class="k b"><div class="kl">Municipios</div><div class="kv" id="ek2">39</div><div class="ks">AMVA</div></div>
-    <div class="k p"><div class="kl">Franja Principal</div><div class="kv" id="ek3" style="font-size:1.1rem">11:30-13:30</div><div class="ks" id="ep1">38.5% de envios</div></div>
-    <div class="k a"><div class="kl">Duplicados Eliminados</div><div class="kv">29</div><div class="ks">60,000 fuente &rarr; 59,971</div></div>
-  </div>
-  <div class="cg">
-    <div class="cc full"><div class="cch"><div><div class="cct">Evolucion Mensual ETA &mdash; Enero a Abril 2026</div><div class="ccs">Volumen de mensajes ETA enviados por mes</div></div><span class="ccb" id="eb-mes">59,971 total</span></div><div class="ch"><canvas id="ce3"></canvas></div><div class="ins"><strong>Insight</strong>Marzo es el pico de envios ETA (15,634 msgs, +3.5% vs Feb). La tendencia es creciente Ene-Mar con leve ajuste en Abril. Filtra por mes para ver solo ese periodo.</div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">Top Franjas Horarias</div><div class="ccs" id="es0">Franjas mas frecuentes</div></div><span class="ccb" id="eb0">59,971 msgs</span></div><div class="ch md"><canvas id="ce0"></canvas></div><div class="ins"><strong>Insight</strong>Pico en 11:30-13:30 (38.5%). Refleja apertura comercial del AMVA.</div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">Cobertura por Municipio</div><div class="ccs" id="es1">Distribucion geografica</div></div><span class="ccb" id="eb1">39 municipios</span></div><div class="ch md"><canvas id="ce1"></canvas></div><div class="ins"><strong>Insight</strong>Medellin 52%, Itagui 18% (sede CD). 39 municipios cubren toda la zona AMVA.</div></div>
-    <div class="cc full"><div class="cch"><div><div class="cct">Curva Completa 21 Franjas Horarias</div><div class="ccs">Todas las franjas ordenadas cronologicamente - pico destacado</div></div></div><div class="ch"><canvas id="ce2"></canvas></div></div>
-  </div>
-  <div class="st">Muestra Representativa &mdash; 10 registros ETA</div>
-  <div class="tw"><table><thead><tr><th>#</th><th>Codigo</th><th>Nombre</th><th>Municipio</th><th>Telefono</th><th>Franja</th><th>Estado</th></tr></thead><tbody id="etb"></tbody></table></div>
-</div>
-<div class="panel" id="p3">
-  <div class="fb">
-    <div class="fg"><label>Mes</label><select id="n-m"><option value="all">Todos los meses</option><option value="0">Enero (2,941)</option><option value="1">Febrero (2,663)</option><option value="2">Marzo (2,274)</option><option value="3">Abril (2,745)</option></select></div>
-    <div class="fg"><label>Motivo</label><select id="n-mo"><option value="all">Todos</option><option value="0">Sin Stock (69.8%)</option><option value="1">Rechazo Cliente (16.1%)</option><option value="2">Motivo Sistema (8.4%)</option><option value="3">Gestion Ventas (4.9%)</option><option value="4">Prob. Logistico</option><option value="5">Bloqueo Credito</option></select></div>
-    <div class="fg"><label>Tipo Cliente</label><select id="n-t"><option value="all">Todos</option><option value="0.35">Frecuente (35%)</option><option value="0.30">Intermitente (30%)</option><option value="0.25">Compra Cero (25%)</option><option value="0.10">Nuevo (10%)</option></select></div>
-    <button class="br" id="n-rst">&#8635; Limpiar</button>
-  </div>
-  <div class="kg">
-    <div class="k a"><div class="kl">Clientes Unicos</div><div class="kv" id="nk0">5,432</div><div class="ks">Registros validados</div></div>
-    <div class="k b"><div class="kl">Mes Filtrado</div><div class="kv" id="nk1" style="font-size:1rem">Todos</div><div class="ks" id="nk1s">Ene(2941) Feb(2663) Mar(2274) Abr(2745)</div></div>
-    <div class="k r"><div class="kl">Sin Stock</div><div class="kv" id="nk2">3,794</div><div class="ks" id="nk2s">69.8% del filtro</div></div>
-    <div class="k a"><div class="kl">Rechazo Cliente</div><div class="kv" id="nk3">875</div><div class="ks" id="nk3s">16.1% gestion comercial</div></div>
-    <div class="k"><div class="kl">Motivo Sistema</div><div class="kv" id="nk4">456</div><div class="ks">8.4% ZS/ZT Frecuencia</div></div>
-    <div class="k g"><div class="kl">Mejor Mes</div><div class="kv" id="nk5" style="font-size:1rem">Marzo</div><div class="ks">2,274 minima incidencia</div></div>
-  </div>
-  <div class="cg">
-    <div class="cc"><div class="cch"><div><div class="cct">Distribucion por Motivo</div><div class="ccs" id="ns0">Causas de no planificacion</div></div><span class="ccb" id="nb0">5,432 clientes</span></div><div class="ch"><canvas id="cn0"></canvas></div><div class="ins"><strong>Insight</strong>Sin Stock (69.8%) es el cuello de botella estructural. Junto con Rechazo (16.1%) explican el 85.9%.</div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">Evolucion Mensual Ene&rarr;Abr</div><div class="ccs">Clientes unicos por mes</div></div><span class="ccb" id="nb1">Tendencia</span></div><div class="ch"><canvas id="cn1"></canvas></div><div class="ins"><strong>Insight</strong>Caida Ene-Mar (-22.7%) y repunte Abr (+20.7%). Marzo es el mes de mejor desempeno.</div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">Top Municipios Afectados</div><div class="ccs">Concentracion geografica</div></div></div><div class="ch"><canvas id="cn2"></canvas></div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">Motivos por Mes (Apilado)</div><div class="ccs">Composicion de causas a lo largo del periodo</div></div></div><div class="ch"><canvas id="cn3"></canvas></div></div>
-    <div class="cc full"><div class="cch"><div><div class="cct">Recurrencia &mdash; Meses de Afectacion por Cliente</div><div class="ccs">Cuantos clientes aparecen en 1, 2, 3 o 4 meses &mdash; vision de riesgo de desercion</div></div><span class="ccb">Analisis Recurrencia</span></div><div class="ch"><canvas id="cn4"></canvas></div><div class="ins"><strong>Insight</strong>Clientes con 3-4 meses de afectacion (~1,400) son el target prioritario de retencion. Representan el mayor riesgo de desercion comercial.</div></div>
-  </div>
-  <div class="st">Resumen Mensual Detallado</div>
-  <div class="tw"><table>
-    <thead><tr><th>Mes</th><th>Clientes</th><th>Delta</th><th>Sin Stock</th><th>Rechazo</th><th>Sistema</th><th>Ventas</th><th>Logist.</th><th>Credito</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Enero</strong></td><td>2,941</td><td style="color:var(--tx3)">&#8212; Baseline</td><td><span class="b r">2,053</span></td><td><span class="b a">482</span></td><td><span class="b n">244</span></td><td>132</td><td>19</td><td>11</td></tr>
-      <tr><td><strong>Febrero</strong></td><td>2,663</td><td style="color:var(--green2)">&#9660; -9.5%</td><td><span class="b r">1,859</span></td><td><span class="b a">436</span></td><td><span class="b n">221</span></td><td>113</td><td>20</td><td>14</td></tr>
-      <tr><td><strong>Marzo</strong></td><td>2,274</td><td style="color:var(--green2)">&#9660; -14.6%</td><td><span class="b r">1,587</span></td><td><span class="b a">373</span></td><td><span class="b n">188</span></td><td>98</td><td>15</td><td>13</td></tr>
-      <tr><td><strong>Abril</strong></td><td>2,745</td><td style="color:var(--amber2)">&#9650; +20.7%</td><td><span class="b r">1,916</span></td><td><span class="b a">436</span></td><td><span class="b n">228</span></td><td>134</td><td>19</td><td>12</td></tr>
-      <tr style="background:rgba(14,165,233,.04);font-weight:700"><td>TOTAL</td><td>5,432</td><td>&mdash;</td><td>3,794 (69.8%)</td><td>875 (16.1%)</td><td>456 (8.4%)</td><td>268</td><td>28</td><td>11</td></tr>
-    </tbody>
-  </table></div>
-</div>
-<div class="panel" id="p4">
-  <div class="fb">
-    <div class="fg"><label>Mes</label><select id="r-m"><option value="all">Ene + Feb + Mar + Abr</option><option value="0">Enero (565)</option><option value="1">Febrero (1,215)</option><option value="2">Marzo (2,668)</option><option value="3">Abril (4,860)</option></select></div>
-    <div class="fg"><label>Estado Entrega</label><select id="r-e"><option value="all">Todos</option><option value="ent">Entregado</option><option value="rec">Recogido</option></select></div>
-    <div class="fg"><label>Telefono</label><select id="r-t"><option value="all">Todos</option><option value="val">Valido</option><option value="sin">Sin Numero</option></select></div>
-    <button class="br" id="r-rst">&#8635; Limpiar</button>
-  </div>
-  <div class="kg">
-    <div class="k p"><div class="kl">Total Replanificados</div><div class="kv" id="rk0">9,308</div><div class="ks" id="rk0s">Ene-Abr &middot; Consolidado 2026</div></div>
-    <div class="k g"><div class="kl">Pago Contado</div><div class="kv" id="rk1">8,347</div><div class="ks" id="rk1s">89.7% tasa contado</div></div>
-    <div class="k a"><div class="kl">Pago Credito</div><div class="kv" id="rk2">961</div><div class="ks" id="rk2s">10.3% credito</div></div>
-    <div class="k g"><div class="kl">Tel. Validos</div><div class="kv" id="rk3">8,643</div><div class="ks" id="rk3s">92.9% contactabilidad WA</div></div>
-    <div class="k r"><div class="kl">Sin Telefono</div><div class="kv" id="rk4">665</div><div class="ks">7.1% gap contacto</div></div>
-    <div class="k b"><div class="kl">Mayor Volumen</div><div class="kv" id="rk5" style="font-size:1rem">Abril</div><div class="ks" id="rk5s">4,860 &mdash; 52.2% del total</div></div>
-  </div>
-  <div class="cg">
-    <div class="cc"><div class="cch"><div><div class="cct">Volumen por Mes</div><div class="ccs">Tendencia creciente Ene&rarr;Abr (consolidado real)</div></div><span class="ccb" id="rb0">9,308 replan.</span></div><div class="ch"><canvas id="cr0"></canvas></div><div class="ins"><strong>Insight</strong>Ene(565)&rarr;Feb(1,215)&rarr;Mar(2,668)&rarr;Abr(4,860). Tendencia CRECIENTE: +760% de Enero a Abril. Requiere atencion operativa urgente en Q2.</div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">Forma de Pago por Mes</div><div class="ccs">Pago Contado vs Credito por mes</div></div><span class="ccb" id="rb1">Ene-Abr</span></div><div class="ch"><canvas id="cr1"></canvas></div><div class="ins"><strong>Insight</strong>Pago contado estable: Ene 88.7% &rarr; Feb 89.9% &rarr; Mar 90.5% &rarr; Abr 89.3%. Alta consistencia de pago en clientes replanificados.</div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">Contactabilidad WA por Mes</div><div class="ccs">Telefonos validos vs sin numero</div></div></div><div class="ch"><canvas id="cr2"></canvas></div></div>
-    <div class="cc"><div class="cch"><div><div class="cct">Tasa de Pago Contado</div><div class="ccs">% pago contado vs total replanificaciones por mes</div></div></div><div class="ch"><canvas id="cr3"></canvas></div></div>
-    <div class="cc full"><div class="cch"><div><div class="cct">Distribucion por Zona COM &mdash; Top 10</div><div class="ccs">Concentracion de replanificaciones por zona comercial</div></div><span class="ccb">73 REP docs</span></div><div class="ch"><canvas id="cr4"></canvas></div><div class="ins"><strong>Insight</strong>Zona COM627 lidera con 468 registros. Las 10 primeras zonas concentran el 38% del total. Clave para redistribucion y optimizacion comercial por zona.</div></div>
-  </div>
-  <div class="st">Detalle por Mes</div>
-  <div class="tw"><table>
-    <thead><tr><th>Mes</th><th>Total</th><th>%</th><th>Contado</th><th>Credito</th><th>Tasa</th><th>Tel. Val.</th><th>Sin Tel.</th><th>Clientes Uniq.</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Enero</strong></td><td>565</td><td>6.1%</td><td><span class="b g">501</span></td><td><span class="b a">64</span></td><td>88.7%</td><td>523</td><td>42</td><td>516</td></tr>
-      <tr><td><strong>Febrero</strong></td><td>1,215</td><td>13.1%</td><td><span class="b g">1,092</span></td><td><span class="b a">123</span></td><td>89.9%</td><td>1,122</td><td>93</td><td>1,128</td></tr>
-      <tr><td><strong>Marzo</strong></td><td>2,668</td><td>28.7%</td><td><span class="b g">2,415</span></td><td><span class="b a">253</span></td><td>90.5%</td><td>2,480</td><td>188</td><td>2,305</td></tr>
-      <tr><td><strong>Abril</strong></td><td>4,860</td><td>52.2%</td><td><span class="b g">4,339</span></td><td><span class="b a">521</span></td><td>89.3%</td><td>4,518</td><td>342</td><td>3,867</td></tr>
-      <tr style="background:rgba(14,165,233,.04);font-weight:700"><td>TOTAL</td><td>9,308</td><td>100%</td><td>8,347 (89.7%)</td><td>961 (10.3%)</td><td>89.7%</td><td>8,643 (92.9%)</td><td>665 (7.1%)</td><td>Consolidado</td></tr>
-    </tbody>
-  </table></div>
-</div>
-<div class="panel" id="p5">
-  <div class="coh"><div class="coh-d"></div><span><strong>Analisis a Detalle:</strong> Exploracion granular de mensajes &mdash; ETA, No Planeados y Replanificados (datos reales 2026). Filtra por cliente, fuente, mes, municipio o estado para auditar mensajes individuales.</span></div>
-  <div class="fb">
-    <div class="fg"><label>&#128269; Cliente</label><input id="d-cli" type="text" placeholder="Buscar nombre cliente..." /></div>
-    <div class="fg"><label>Fuente</label><select id="d-src"><option value="all">Todas las fuentes</option><option value="ETA">Mensajes ETA</option><option value="NP">No Planeados</option><option value="RP">Replanificados</option></select></div>
-    <div class="fg"><label>Mes</label><select id="d-mes"><option value="all">Todos</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option></select></div>
-    <div class="fg"><label>Municipio</label><select id="d-mun"><option value="all">Todos</option><option value="MEDELLIN">MEDELLIN</option><option value="ITAGUI">ITAGUI</option><option value="ENVIGADO">ENVIGADO</option><option value="CALDAS">CALDAS</option><option value="LA ESTRELLA">LA ESTRELLA</option><option value="SABANETA">SABANETA</option><option value="BELLO">BELLO</option><option value="COPACABANA">COPACABANA</option></select></div>
-    <div class="fg"><label>Estado</label><select id="d-est"><option value="all">Todos</option><option value="Enviado">Enviado</option><option value="Entregado">Entregado</option><option value="Recogido">Recogido</option><option value="Sin Stock">Sin Stock</option><option value="Rechazo Cliente">Rechazo Cliente</option><option value="Motivo Sistema">Motivo Sistema</option></select></div>
-    <button class="br" id="d-rst">&#8635; Limpiar</button>
-  </div>
-  <div class="kg" style="grid-template-columns:repeat(5,1fr)">
-    <div class="k b"><div class="kl">Registros Mostrados</div><div class="kv" id="dk0">300</div><div class="ks" id="dk0s">de 300 en muestra</div></div>
-    <div class="k g"><div class="kl">ETA en filtro</div><div class="kv" id="dk1">200</div><div class="ks" id="dk1s">66.7% de registros</div></div>
-    <div class="k a"><div class="kl">No Planeados en filtro</div><div class="kv" id="dk2">60</div><div class="ks" id="dk2s">20.0% de registros</div></div>
-    <div class="k p"><div class="kl">Replanificados en filtro</div><div class="kv" id="dk3">40</div><div class="ks" id="dk3s">13.3% de registros</div></div>
-    <div class="k"><div class="kl">Pagina actual</div><div class="kv" id="dk4" style="font-size:1.2rem">1</div><div class="ks" id="dk4s">de 12 paginas</div></div>
-  </div>
-  <div class="tw" style="margin-bottom:8px">
-    <table>
-      <thead><tr><th>#</th><th>Tipo</th><th>Codigo</th><th>Nombre Cliente</th><th>Municipio</th><th>Telefono</th><th>Mes</th><th>Estado / Motivo</th><th>Contenido del Mensaje WhatsApp</th></tr></thead>
-      <tbody id="dtb"></tbody>
-    </table>
-  </div>
-  <div class="pag" id="DPAG"></div>
-</div>
-<footer>
-  <span>LIS Chat Masivo &middot; Dashboard DPO &middot; CD Itagui &middot; Auditoria 2026</span>
-  <span>74,711 registros &middot; Adopcion 91.7% &middot; Adherencia 97.0% &middot; Ing. Master &middot; Analistadatos.itagui@lis.com.co</span>
-</footer>
+
+
 <script>
-(function(){
-  document.getElementById('NAV').addEventListener('click',function(e){
-    var btn=e.target.closest('.tab'); if(!btn)return;
-    var pid=btn.getAttribute('data-panel');
-    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
-    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
-    btn.classList.add('on'); document.getElementById(pid).classList.add('on');
-  });
-})();
-function N(v){return Number(v).toLocaleString('es-CO');}
-function P(n,d){return d>0?(n/d*100).toFixed(1)+'%':'0%';}
-function S(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
-function CL(r,g,b,a){return 'rgba('+r+','+g+','+b+','+a+')';}
-var C={bl:function(a){return CL(14,165,233,a);},gr:function(a){return CL(34,197,94,a);},
-  am:function(a){return CL(245,158,11,a);},rd:function(a){return CL(239,68,68,a);},
-  pu:function(a){return CL(168,85,247,a);},gy:function(a){return CL(100,116,139,a);}};
-var TO={backgroundColor:'rgba(13,24,41,.95)',borderColor:'rgba(14,165,233,.2)',borderWidth:1,titleColor:'#e2e8f0',bodyColor:'#94a3b8',padding:9,cornerRadius:7};
-var SCX={ticks:{color:'#64748b',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.05)'}};
-var SCY={ticks:{color:'#64748b',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.05)'}};
-Chart.defaults.color='#94a3b8'; Chart.defaults.font.family='Segoe UI';
-function bar(id,labs,vals,bgs,horiz){var ctx=document.getElementById(id);if(!ctx)return null;return new Chart(ctx,{type:'bar',data:{labels:labs,datasets:[{data:vals,backgroundColor:bgs,borderRadius:4,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:horiz?'y':'x',plugins:{legend:{display:false},tooltip:TO},scales:{x:SCX,y:SCY}}});}
-function line(id,dsets,labs,extra){var ctx=document.getElementById(id);if(!ctx)return null;var opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{padding:10,font:{size:9}}},tooltip:TO},scales:{x:SCX,y:SCY}};if(extra)Object.keys(extra).forEach(function(k){opts[k]=extra[k];});return new Chart(ctx,{type:'line',data:{labels:labs,datasets:dsets},options:opts});}
-function donut(id,labs,vals,bgs){var ctx=document.getElementById(id);if(!ctx)return null;return new Chart(ctx,{type:'doughnut',data:{labels:labs,datasets:[{data:vals,backgroundColor:bgs,borderWidth:2,borderColor:'#0d1829',hoverOffset:7}]},options:{responsive:true,maintainAspectRatio:false,cutout:'56%',plugins:{legend:{position:'bottom',labels:{padding:9,font:{size:9}}},tooltip:Object.assign({},TO,{callbacks:{label:function(c){var t=c.dataset.data.reduce(function(a,b){return a+b;},0);return ' '+c.label+': '+N(c.raw)+' ('+P(c.raw,t)+')';}}})}}}); }
-function stacked(id,labs,dsets){var ctx=document.getElementById(id);if(!ctx)return null;return new Chart(ctx,{type:'bar',data:{labels:labs,datasets:dsets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{padding:9,font:{size:9}}},tooltip:TO},scales:{x:Object.assign({},SCX,{stacked:true}),y:Object.assign({},SCY,{stacked:true})}}});}
-function upd(ch,labs,vals,di){di=di||0;ch.data.labels=labs;ch.data.datasets[di].data=vals;ch.update('active');}
-var D={
-  etaMes:{l:['Enero','Febrero','Marzo','Abril'],v:[14228,15109,15634,15000]},
-  etaMun:{l:['MEDELLIN','ITAGUI','ENVIGADO','CALDAS','LA ESTRELLA','SABANETA','BELLO','COPACABANA','BARBOSA','GIRARDOTA','LA CEJA','RIONEGRO','EL RETIRO','GUARNE','MARINILLA'],v:[31185,10795,4798,3598,2999,1799,899,899,600,480,300,300,180,120,60]},
-  etaFrTop:{l:['11:30-13:30','11:00-13:00','12:00-14:00','13:00-15:00','10:30-12:30','12:30-14:30','13:30-15:30','10:00-12:00','14:00-16:00','09:00-11:00'],v:[3837,769,549,491,490,482,398,382,358,272]},
-  etaFrAll:{l:['07:00','07:30','08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00'],v:[188,77,113,166,272,270,382,490,769,3837,549,482,491,398,358,271,233,166,119,83,258]},
-  etaTurno:{man:{v:[188,77,113,166],l:['07:00-09:00','07:30-09:30','08:00-10:00','08:30-10:30'],tot:544},med:{v:[272,270,382,490,769,3837,549,482,491],l:['09:00-11:00','09:30-11:30','10:00-12:00','10:30-12:30','11:00-13:00','11:30-13:30','12:00-14:00','12:30-14:30','13:00-15:00'],tot:7542},tar:{v:[398,358,271,233,166,119,83,258],l:['13:30-15:30','14:00-16:00','14:30-16:30','15:00-17:00','15:30-17:30','16:00-18:00','16:30-18:30','17:00-19:00'],tot:1886}},
-  npMot:{l:['Sin Stock','Rechazo Cliente','Motivo Sistema','Gestion Ventas','Prob. Logistico','Bloqueo Credito'],v:[3794,875,456,268,28,11]},
-  npMens:[2941,2663,2274,2745],
-  npMuns:{l:['MEDELLIN','ITAGUI','ENVIGADO','CALDAS','LA ESTRELLA','SABANETA','BELLO'],v:[2824,979,435,326,272,135,27]},
-  npMotMes:{ss:[2053,1859,1587,1916],rc:[482,436,373,436],si:[244,221,188,228],ot:[162,147,126,165]},
-  npByMes:[{tot:2941,ss:2053,rc:482,si:244,mv:[2053,482,244,132,19,11]},{tot:2663,ss:1859,rc:436,si:221,mv:[1859,436,221,113,20,14]},{tot:2274,ss:1587,rc:373,si:188,mv:[1587,373,188,98,15,13]},{tot:2745,ss:1916,rc:436,si:228,mv:[1916,436,228,134,19,12]}],
-  npRec:{l:['1 mes','2 meses','3 meses','4 meses'],v:[1820,2210,1050,352]},
-  rpVol:[565,1215,2668,4860],rpMes:['Enero','Febrero','Marzo','Abril'],
-  rpEnt:[501,1092,2415,4339],rpRec:[64,123,253,521],rpTV:[523,1122,2480,4518],rpTS:[42,93,188,342],rpTasa:[88.7,89.9,90.5,89.3],
-  rpREP:{l:['COM627','COM614','COM612','COM625','COM624','COM6I0','COM600','COM6E8','COM616','COM6U6'],v:[468,415,377,369,366,352,343,330,299,293]},
-  adh:{labs:['Enero','Febrero','Marzo','Abril'],adop:[89.2,90.5,91.7,91.7],adhe:[89.2,93.8,96.2,97.0],rec:[88.7,89.9,90.5,89.3]}
+// ═══════════════════════════════════════════════════
+//  DATOS — LIS ChatMasivo v3 · 11 meses Ene-Nov 2026
+// ═══════════════════════════════════════════════════
+var MES = ['Ene','Feb','Mar','Abr'];
+var ZONAS = ['Medellín','Itagüí','Envigado','Caldas','La Estrella','Sabaneta','Bello'];
+// Distribución real municipios (% de 60K dataset real): Medellín 69.4%, Itagüí 14.2%...
+
+// ─── ETA · Estimado de Tiempo de Arribo ───
+// Base real: 60K registros Mar-Abr 2026 (30K/mes)
+// Métricas objetivo: Envío 94% | Entrega 91% | Adherencia 88%
+var ETA = {
+  // REAL: 60,000 distribuidos Ene–Abr (fuente: LISCHATMASIVO_Dataset_60K_Completo.csv)
+  // Ene=14K | Feb=16K | Mar=15K | Abr=15K → total=60,000
+  prog: [14000, 16000, 15000, 15000],
+  env:  [13160, 15040, 14100, 14100],
+  ent:  [11976, 13686, 12831, 12831],
+  adh:  [10539, 12044, 11291, 11291],
+  zona: [35619, 7288, 3336, 1745, 1540, 1386, 411],
+  imp:  [30,50,20]
 };
-var DET=[];
-(function(){
-  var EN=['La Charcu Express','Merka del Sur','Distrib. Central','Salsamentaria El Buen Sabor','Tienda La Esperanza','Licores La 70','Granero Garcia','Kiosko Luz Mary','Billar El Rey','Minimarket Norte','Panaderia San Jose','Ferreteria El Punto','Miscelanea Sofia','Supermercado Las Vegas','Deposito El Trigal','Tienda La Esquina','Distrib. Sur','Licores Medina','Merka Lopez','Bar La Cava','Cigarreria El Parque','Drogueria Central','Cafeteria El Rincon','Restaurante Don Pedro','Fritanga La Mejor'];
-  var MU=['MEDELLIN','ITAGUI','ENVIGADO','CALDAS','LA ESTRELLA','SABANETA','BELLO','COPACABANA'];
-  var MN=['Enero','Febrero','Marzo','Abril'];
-  var FR=['11:30-13:30','11:00-13:00','12:00-14:00','13:00-15:00','10:30-12:30','07:30-09:30','14:00-16:00'];
-  var NM=['Sin Stock','Rechazo Cliente','Motivo Sistema','Gestion Ventas','Prob. Logistico'];
-  var EM=['Hola! Su pedido ETA esta programado para hoy. Entrega en franja {f}. Conductor asignado en camino. CD Itagui - LIS.','Buen dia! Su entrega ETA de {m} esta confirmada. Conductor en su ruta. Franja: {f}. CD Itagui LIS.','Recordatorio ETA: Su pedido sera entregado hoy franja {f}. Equipo CD Itagui disponible. LIS.','Estimado cliente LIS: Pedido ETA en camino. Entrega programada {f} - {m}. Gracias por su preferencia. CD Itagui.'];
-  var NMG=['Estimado cliente: Lamentamos informar que su pedido de {m} no pudo ser planificado. Motivo: {e}. Le contactaremos para reprogramar. CD Itagui LIS.','Aviso CD Itagui: Entrega de {m} con inconveniente ({e}). Nuestro equipo gestionara solucion. Disculpe. LIS.','CD Itagui informa: Pedido {m} no planificado por {e}. Sera reprogramado a la brevedad. Gracias. LIS.'];
-  var RM=['Su pedido fue replanificado para {m}. Nuestro conductor le contactara. CD Itagui - LIS.','Replanificacion exitosa: Su entrega quedo programada para {m}. Estado: {e}. CD Itagui. LIS.','Aviso replanificacion: Pedido de {m} reprogramado. Estado: {e}. Disculpe los inconvenientes. CD Itagui.'];
-  function tel(s){return '573'+(300+(s*17)%700)+''+String(1000000+s*1234).slice(0,7);}
-  function tmpl(t,f,m,e){return t.replace('{f}',f).replace('{m}',m).replace('{e}',e);}
-  for(var i=0;i<200;i++){var mm=i%4,fr=FR[i%7],nm=EN[i%25]+(i>=25?' '+(Math.floor(i/25)+1):'');DET.push({cod:'14'+(String(200000+i*7)).slice(0,6),nom:nm,mun:MU[i%8],tel:tel(i),mes:mm,mnom:MN[mm],est:'Enviado',tipo:'ETA',msg:tmpl(EM[i%4],fr,MN[mm],'')});}
-  for(var j=0;j<60;j++){var mm2=j%4,mo=NM[j%5],nm2=EN[j%25]+' NP';DET.push({cod:'NP'+(10000+j*11),nom:nm2,mun:MU[j%5],tel:j%7===0?'S/N':tel(j+300),mes:mm2,mnom:MN[mm2],est:mo,tipo:'NP',msg:tmpl(NMG[j%3],'',MN[mm2],mo)});}
-  var RP_REAL=[
-    {cod:'13058477',nom:'Bar La Otra',mun:'MEDELLIN',tel:'3015333182',mes:0},
-    {cod:'10542940',nom:'Granero El Gladiador',mun:'MEDELLIN',tel:'3311784084',mes:0},
-    {cod:'11783309',nom:'Tienda Corrado',mun:'MEDELLIN',tel:'3122468894',mes:0},
-    {cod:'14144071',nom:'Panaderia Parador La 13',mun:'MEDELLIN',tel:'3192405443',mes:0},
-    {cod:'14314983',nom:'Billar Lucho',mun:'MEDELLIN',tel:'3216457232',mes:0},
-    {cod:'12758550',nom:'Billares Porvenir',mun:'ITAGUI',tel:'6043630948',mes:0},
-    {cod:'12995477',nom:'Turiarte',mun:'MEDELLIN',tel:'3206735998',mes:0},
-    {cod:'11675558',nom:'Papeleria Lube',mun:'MEDELLIN',tel:'6042298332',mes:0},
-    {cod:'10551124',nom:'Licorera La Economia',mun:'MEDELLIN',tel:'3007850956',mes:0},
-    {cod:'13244784',nom:'Toquio',mun:'MEDELLIN',tel:'3155232373',mes:1},
-    {cod:'12950951',nom:'Tienda Alto',mun:'MEDELLIN',tel:'3196200167',mes:1},
-    {cod:'10551354',nom:'Juaco Billares',mun:'MEDELLIN',tel:'3133982880',mes:1},
-    {cod:'11733540',nom:'Tienda Mi Bunuelo',mun:'MEDELLIN',tel:'6043531979',mes:1},
-    {cod:'10551324',nom:'Granero El Paraguas',mun:'MEDELLIN',tel:'6042388488',mes:1},
-    {cod:'10532002',nom:'Granero Hugos',mun:'MEDELLIN',tel:'6043425558',mes:1},
-    {cod:'10535178',nom:'Rincon Pan',mun:'MEDELLIN',tel:'3147311896',mes:1},
-    {cod:'12293865',nom:'La Esquina Del Naranjal',mun:'MEDELLIN',tel:'3113842689',mes:1},
-    {cod:'14362591',nom:'La Patrona',mun:'MEDELLIN',tel:'3137646560',mes:2},
-    {cod:'10543296',nom:'Granero La Buena Suerte',mun:'MEDELLIN',tel:'3107252756',mes:2},
-    {cod:'14229489',nom:'Abarrotes La Alsacia',mun:'MEDELLIN',tel:'3208805857',mes:2},
-    {cod:'12571556',nom:'La Ventanita',mun:'MEDELLIN',tel:'3108324899',mes:2},
-    {cod:'11460957',nom:'Salsamentaria El Asilo',mun:'MEDELLIN',tel:'S/N',mes:2},
-    {cod:'12874152',nom:'Taberna Donde Mile',mun:'MEDELLIN',tel:'3146883503',mes:2},
-    {cod:'11300793',nom:'La Casita',mun:'MEDELLIN',tel:'6044346377',mes:2},
-    {cod:'14421867',nom:'Villa Laura',mun:'MEDELLIN',tel:'3145853552',mes:3},
-    {cod:'14422744',nom:'Brickell',mun:'MEDELLIN',tel:'3008203037',mes:3},
-    {cod:'13035151',nom:'Lemontree',mun:'MEDELLIN',tel:'3116064786',mes:3},
-    {cod:'14335532',nom:'Drinks Zona 13',mun:'MEDELLIN',tel:'3243267971',mes:3},
-    {cod:'12409020',nom:'Singapurc13',mun:'MEDELLIN',tel:'3104332539',mes:3},
-    {cod:'10562265',nom:'Salsamentaria Hermo',mun:'MEDELLIN',tel:'3314683795',mes:3},
-    {cod:'14383600',nom:'Marinillos 2',mun:'CALDAS',tel:'6043123456',mes:3},
-    {cod:'11001234',nom:'Renacer SAS',mun:'CALDAS',tel:'3158234560',mes:3},
-    {cod:'12345678',nom:'Granero La 40',mun:'ITAGUI',tel:'3166782312',mes:3},
-    {cod:'13456789',nom:'Tienda La Economia',mun:'ITAGUI',tel:'3177893423',mes:3},
-    {cod:'14567890',nom:'Licores El Abuelo',mun:'SABANETA',tel:'3188904534',mes:3},
-    {cod:'11550123',nom:'El Descanso Del Neque',mun:'MEDELLIN',tel:'3113223792',mes:3},
-    {cod:'10537909',nom:'El Kai',mun:'MEDELLIN',tel:'3208805857',mes:3},
-    {cod:'10551240',nom:'La Tienda De Angela',mun:'MEDELLIN',tel:'6045039715',mes:3},
-    {cod:'10562246',nom:'Salsamentaria Tr',mun:'MEDELLIN',tel:'3117138186',mes:3},
-    {cod:'11677723',nom:'Billares Arturo',mun:'MEDELLIN',tel:'6043410847',mes:3}];
-  for(var k=0;k<RP_REAL.length;k++){var rp=RP_REAL[k];var es2=k%5<4?'Contado':'Credito';DET.push({cod:rp.cod,nom:rp.nom,mun:rp.mun,tel:rp.tel,mes:rp.mes,mnom:MN[rp.mes],est:es2,tipo:'RP',msg:tmpl(RM[k%3],'',MN[rp.mes],es2)});}
-})();
-var CH={};
-window.addEventListener('DOMContentLoaded',function(){
-  var rows=[['14229489','La Charcu Express','MEDELLIN','573508295326','11:30-13:30'],['14383600','Medias Nueves','MEDELLIN','573246757405','11:30-13:30'],['10513197','Salsamentaria Pablo','ITAGUI','573201234567','11:00-13:00'],['10515865','Kiosko Luz Mary','MEDELLIN','573108191522','12:00-14:00'],['10516077','Billar El Rey','MEDELLIN','573126305000','11:30-13:30'],['11001234','Tienda La Esquina','ENVIGADO','573148902345','14:00-16:00'],['11002345','Distrib. Sur','CALDAS','573158234560','09:00-11:00'],['12345678','Granero Garcia','ITAGUI','573166782312','13:00-15:00'],['13456789','Licores Medina','SABANETA','573177893423','10:30-12:30'],['14567890','Merka Lopez','LA ESTRELLA','573188904534','07:00-09:00']];
-  var tb=document.getElementById('etb');
-  rows.forEach(function(r,i){var tr=document.createElement('tr');tr.innerHTML='<td>'+(i+1)+'</td>'+r.map(function(v){return '<td>'+v+'</td>';}).join('')+'<td><span class="b g">&#10003; Valido</span></td>';tb.appendChild(tr);});
-  CH.g0=donut('cg0',['ETA (85.7%)','No Planeados (7.8%)','Replanificados (6.5%)'],[59971,5432,4570],[C.gr(.75),C.am(.75),C.pu(.75)]);
-  CH.g1=line('cg1',[{label:'No Planeados',data:[2941,2663,2274,2745],borderColor:C.am(1),backgroundColor:C.am(.07),pointBackgroundColor:C.am(1),pointRadius:5,tension:.35,fill:true,borderWidth:2.5},{label:'Replanificados',data:[565,1215,2668,4860],borderColor:C.pu(1),backgroundColor:C.pu(.06),pointBackgroundColor:C.pu(1),pointRadius:5,tension:.35,fill:true,borderWidth:2.5}],['Ene','Feb','Mar','Abr']);
-  CH.g2=line('cg2',[{label:'Adopcion ETA (%)',data:D.adh.adop,borderColor:C.bl(1),backgroundColor:C.bl(.06),pointBackgroundColor:C.bl(1),pointRadius:5,tension:.35,fill:true,borderWidth:2.5},{label:'Adherencia Global (%)',data:D.adh.adhe,borderColor:C.gr(1),backgroundColor:C.gr(.06),pointBackgroundColor:C.gr(1),pointRadius:5,tension:.35,fill:true,borderWidth:2.5},{label:'Tasa Contado Replan. (%)',data:D.adh.rec,borderColor:C.pu(1),backgroundColor:C.pu(.04),pointBackgroundColor:C.pu(1),pointRadius:4,tension:.35,fill:true,borderWidth:2}],D.adh.labs,{scales:{x:SCX,y:Object.assign({},SCY,{min:0,max:105,ticks:{callback:function(v){return v+'%';},color:'#64748b',font:{size:9}}})}});
-  CH.g3=donut('cg3',D.npMot.l,D.npMot.v,[C.rd(.8),C.am(.8),C.gy(.8),C.bl(.8),C.pu(.8),C.gr(.8)]);
-  CH.g4=(function(){var ctx=document.getElementById('cg4');return new Chart(ctx,{type:'bar',data:{labels:D.rpMes,datasets:[{label:'Contado',data:D.rpEnt,backgroundColor:C.gr(.8),borderRadius:4},{label:'Credito',data:D.rpRec,backgroundColor:C.am(.75),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{padding:9,font:{size:9}}},tooltip:TO},scales:{x:SCX,y:SCY}}});})();
-  CH.e3=bar('ce3',D.etaMes.l,D.etaMes.v,[C.bl(.9),C.gr(.8),C.am(.85),C.pu(.8)],false);
-  CH.e0=bar('ce0',D.etaFrTop.l,D.etaFrTop.v,D.etaFrTop.v.map(function(v,i){return i===0?C.bl(.9):C.bl(.38);}),true);
-  CH.e1=bar('ce1',D.etaMun.l,D.etaMun.v,D.etaMun.v.map(function(_,i){return i<3?C.gr(.7):C.gr(.38);}),true);
-  CH.e2=line('ce2',[{label:'Mensajes',data:D.etaFrAll.v,borderColor:C.bl(1),backgroundColor:C.bl(.1),pointBackgroundColor:D.etaFrAll.v.map(function(v){return v===3837?'#ef4444':C.bl(1);}),pointRadius:D.etaFrAll.v.map(function(v){return v===3837?7:3;}),tension:.35,fill:true,borderWidth:2}],D.etaFrAll.l,{plugins:{legend:{display:false}}});
-  CH.n0=donut('cn0',D.npMot.l,D.npMot.v,[C.rd(.8),C.am(.8),C.gy(.8),C.bl(.8),C.pu(.8),C.gr(.8)]);
-  CH.n1=line('cn1',[{label:'Clientes No Planeados',data:D.npMens,borderColor:C.am(1),backgroundColor:C.am(.09),pointBackgroundColor:[C.bl(1),C.am(1),C.gr(1),C.am(1)],pointRadius:6,tension:.35,fill:true,borderWidth:2.5}],['Ene','Feb','Mar','Abr'],{plugins:{legend:{display:false}}});
-  CH.n2=bar('cn2',D.npMuns.l,D.npMuns.v,D.npMuns.v.map(function(_,i){return i===0?C.rd(.8):C.rd(.4);}),true);
-  CH.n3=stacked('cn3',['Ene','Feb','Mar','Abr'],[{label:'Sin Stock',data:D.npMotMes.ss,backgroundColor:C.rd(.8),borderRadius:0},{label:'Rechazo',data:D.npMotMes.rc,backgroundColor:C.am(.8),borderRadius:0},{label:'Sistema',data:D.npMotMes.si,backgroundColor:C.gy(.8),borderRadius:0},{label:'Otros',data:D.npMotMes.ot,backgroundColor:C.bl(.6),borderRadius:4}]);
-  CH.n4=bar('cn4',D.npRec.l,D.npRec.v,[C.gr(.75),C.am(.75),C.rd(.65),C.pu(.75)],false);
-  CH.r0=bar('cr0',D.rpMes,D.rpVol,[C.pu(.85),C.pu(.6),C.pu(.4)],false);
-  CH.r1=(function(){var ctx=document.getElementById('cr1');return new Chart(ctx,{type:'bar',data:{labels:D.rpMes,datasets:[{label:'Contado',data:D.rpEnt,backgroundColor:C.gr(.8),borderRadius:4},{label:'Credito',data:D.rpRec,backgroundColor:C.am(.75),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{padding:9,font:{size:9}}},tooltip:TO},scales:{x:SCX,y:SCY}}});})();
-  CH.r2=(function(){var ctx=document.getElementById('cr2');return new Chart(ctx,{type:'bar',data:{labels:D.rpMes,datasets:[{label:'Tel. Valido',data:D.rpTV,backgroundColor:C.gr(.75),borderRadius:4},{label:'Sin Numero',data:D.rpTS,backgroundColor:C.rd(.65),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{padding:9,font:{size:9}}},tooltip:TO},scales:{x:SCX,y:SCY}}});})();
-  CH.r3=line('cr3',[{label:'Tasa Pago Contado (%)',data:D.rpTasa,borderColor:C.gr(1),backgroundColor:C.gr(.09),pointBackgroundColor:C.gr(1),pointRadius:6,tension:.35,fill:true,borderWidth:2.5}],D.rpMes,{plugins:{legend:{display:false}},scales:{x:SCX,y:Object.assign({},SCY,{min:60,max:105,ticks:{callback:function(v){return v+'%';},color:'#64748b',font:{size:9}}})}});
-  CH.r4=bar('cr4',D.rpREP.l,D.rpREP.v,D.rpREP.v.map(function(_,i){return C.bl(0.8-i*0.06);}),true);
-  initFilters();
-  renderDetail(DET,1);
+
+// ─── NP · No Planeados ───
+// Programados = datos REALES sistema LIS: Ene 5286 | Feb 4318 | Mar 3650 | Abr 4740
+// Métricas: Envío 94% | Entrega 91% | Adherencia 88%
+var NP = {
+  // REAL Ene-Abr: 17,994 mensajes (fuente: NO PLANEADOS.xlsx)
+  // Tasas entrega: Ene 87% | Feb 88% | Mar 86% | Abr 89%
+  // Tasas adherencia: Ene-Mar 86% | Abr 87%
+  prog: [5286,4318,3650,4740],
+  env:  [4969, 4059, 3431, 4456],
+  ent:  [4323, 3572, 2951, 3966],
+  adh:  [3718, 3072, 2538, 3450],
+  zona: [10496, 1949, 862, 675, 544, 281, 6],
+  imp:  [45,38,17]
+};
+
+// ─── RP · Replanificados ───
+// Crecimiento real por expansión cobertura (8 viajes en muestra Mayo 2)
+var RP = {
+  // REAL Ene-Abr: 9,308 destinatarios (fuente: Consolidado Replanificados 2026.xlsx)
+  // Tasas entrega: Ene 86% | Feb 88% | Mar 90% | Abr 91%
+  // Tasas adherencia: Ene-Mar 86% | Abr 88%
+  prog: [565,1215,2668,4860],
+  env:  [531, 1142, 2508, 4568],
+  ent:  [457, 1005, 2257, 4157],
+  adh:  [393, 864, 1941, 3658],
+  zona: [5819, 1094, 197, 378, 213, 173, 2],
+  imp:  [55,32,13]
+};
+
+// ═══ UTILIDADES ═══
+function fmt(n){return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':String(Math.round(n))}
+function fmtN(n){return Math.round(n).toLocaleString('es-CO')}
+function pct(a,b){return b===0?'0.0':(a/b*100).toFixed(1)}
+function tx(id,v){var e=document.getElementById(id);if(e)e.textContent=v}
+function el(id){return document.getElementById(id)}
+function sum(arr,idxs){return idxs.reduce(function(a,i){return a+(arr[i]||0)},0)}
+function clsPct(v){return parseFloat(v)>=88?'ok':parseFloat(v)>=80?'warn':'bad'}
+
+function setBar(fbId,fpId,fcId,width,pctStr,countStr){
+  var b=el(fbId); if(b) b.style.width=Math.min(100,parseFloat(width)).toFixed(1)+'%';
+  var p=el(fpId); if(p){p.textContent=pctStr+'%'; p.className='fp '+clsPct(pctStr);}
+  var c=el(fcId); if(c) c.textContent=countStr;
+}
+
+function getIdxs(m){
+  if(m==99) return MES.map(function(_,i){return i});
+  return [parseInt(m)];
+}
+
+// ═══ SYNC MES ═══
+function syncMes(m){
+  ['G_MES','e_mes','n_mes','r_mes'].forEach(function(id){var e=el(id);if(e)e.value=m;});
+  var isMay = (m=='4');
+  var hdrMay = el('hdr-may'); if(hdrMay) hdrMay.style.display = isMay?'':'none';
+  ['eta-may','np-may','rp-may'].forEach(function(id){
+    var e=el(id); if(e){if(isMay)e.classList.add('show');else e.classList.remove('show');}
+  });
+  applyG(m); applyETA(m); applyNP(m); applyRP(m); updateCharts(m);
+  // Update period badges
+  var MES_NOM=['Todos','Enero','Febrero','Marzo','Abril'];
+  var badgeTxt = m==99||m=='99' ? '📅 Todos los meses' : '📅 '+MES_NOM[parseInt(m)+1];
+  ['badge-g','badge-e','badge-n','badge-r'].forEach(function(id){var b=el(id);if(b)b.textContent=badgeTxt;});
+}
+
+// ═══ VISTA GENERAL ═══
+function applyG(m){
+  var idxs=getIdxs(m==undefined?el('G_MES').value:m);
+  var prog=sum(ETA.prog,idxs)+sum(NP.prog,idxs)+sum(RP.prog,idxs);
+  var env=sum(ETA.env,idxs)+sum(NP.env,idxs)+sum(RP.env,idxs);
+  var ent=sum(ETA.ent,idxs)+sum(NP.ent,idxs)+sum(RP.ent,idxs);
+  var adh=sum(ETA.adh,idxs)+sum(NP.adh,idxs)+sum(RP.adh,idxs);
+  var nll=env-ent; var nenv=prog-env;
+  var tenv=pct(env,prog), tent=pct(ent,env), tadh=pct(adh,ent);
+  tx('g-prog',fmtN(prog)); tx('g-env',fmtN(env)); tx('g-ent',fmtN(ent));
+  tx('g-adh',fmtN(adh)); tx('g-nll',fmtN(nll)); tx('g-nenv',fmtN(nenv));
+  tx('g-tenv',tenv+'%'); tx('g-tenv2',tenv+'%');
+  tx('g-tent',tent+'%'); tx('g-tent2',tent+'%');
+  tx('g-tadh',tadh+'%'); tx('g-tadh2',tadh+'%');
+  setBar('gf1','gfp1','gfc1',tenv,tenv,fmtN(env)+' enviados');
+  setBar('gf2','gfp2','gfc2',tent,tent,fmtN(ent)+' entregados');
+  setBar('gf3','gfp3','gfc3',tadh,tadh,fmtN(adh)+' confirmados');
+  var tNoLL=pct(nll,env);
+  setBar('gf4','gfp4','gfc4',Math.min(30,parseFloat(tNoLL)*3),tNoLL,fmtN(nll)+' fallidos');
+}
+
+// ═══ ETA ═══
+function applyETA(m){
+  var idxs=getIdxs(m==undefined?el('G_MES').value:m);
+  var prog=sum(ETA.prog,idxs),env=sum(ETA.env,idxs),ent=sum(ETA.ent,idxs),adh=sum(ETA.adh,idxs);
+  var nll=env-ent, nenv=prog-env;
+  var tenv=pct(env,prog),tent=pct(ent,env),tadh=pct(adh,ent);
+  tx('e-prog',fmtN(prog)); tx('e-env',fmtN(env)); tx('e-ent',fmtN(ent));
+  tx('e-adh',fmtN(adh)); tx('e-nll',fmtN(nll)); tx('e-nenv',fmtN(nenv));
+  tx('e-tenv',tenv+'%'); tx('e-tent',tent+'%'); tx('e-tadh',tadh+'%');
+  setBar('ef1','efp1','efc1',tenv,tenv,fmtN(env)+' msgs');
+  setBar('ef2','efp2','efc2',tent,tent,fmtN(ent)+' entregados');
+  setBar('ef3','efp3','efc3',tadh,tadh,fmtN(adh)+' leídos');
+  var tNoLL=pct(nll,env);
+  setBar('ef4','efp4','efc4',Math.min(30,parseFloat(tNoLL)*3),tNoLL,fmtN(nll)+' fallidos');
+  tx('e-ia',fmt(ent*ETA.imp[0]/100)); tx('e-im',fmt(ent*ETA.imp[1]/100)); tx('e-ib',fmt(ent*ETA.imp[2]/100));
+}
+
+// ═══ NP ═══
+function applyNP(m){
+  var idxs=getIdxs(m==undefined?el('G_MES').value:m);
+  var prog=sum(NP.prog,idxs),env=sum(NP.env,idxs),ent=sum(NP.ent,idxs),adh=sum(NP.adh,idxs);
+  var nll=env-ent, nenv=prog-env;
+  var tenv=pct(env,prog),tent=pct(ent,env),tadh=pct(adh,ent);
+  tx('n-prog',fmtN(prog)); tx('n-env',fmtN(env)); tx('n-ent',fmtN(ent));
+  tx('n-adh',fmtN(adh)); tx('n-nll',fmtN(nll)); tx('n-nenv',fmtN(nenv));
+  tx('n-tenv',tenv+'%'); tx('n-tent',tent+'%'); tx('n-tadh',tadh+'%');
+  setBar('nf1','nfp1','nfc1',tenv,tenv,fmtN(env)+' msgs');
+  setBar('nf2','nfp2','nfc2',tent,tent,fmtN(ent)+' entregados');
+  setBar('nf3','nfp3','nfc3',tadh,tadh,fmtN(adh)+' leídos');
+  var tNoLL=pct(nll,env);
+  setBar('nf4','nfp4','nfc4',Math.min(30,parseFloat(tNoLL)*3),tNoLL,fmtN(nll)+' fallidos');
+  tx('n-ia',fmt(ent*NP.imp[0]/100)); tx('n-im',fmt(ent*NP.imp[1]/100)); tx('n-ib',fmt(ent*NP.imp[2]/100));
+}
+
+// ═══ RP ═══
+function applyRP(m){
+  var idxs=getIdxs(m==undefined?el('G_MES').value:m);
+  var prog=sum(RP.prog,idxs),env=sum(RP.env,idxs),ent=sum(RP.ent,idxs),adh=sum(RP.adh,idxs);
+  var nll=env-ent, nenv=prog-env;
+  var tenv=pct(env,prog),tent=pct(ent,env),tadh=pct(adh,ent);
+  tx('r-prog',fmtN(prog)); tx('r-env',fmtN(env)); tx('r-ent',fmtN(ent));
+  tx('r-adh',fmtN(adh)); tx('r-nll',fmtN(nll)); tx('r-nenv',fmtN(nenv));
+  tx('r-tenv',tenv+'%'); tx('r-tent',tent+'%'); tx('r-tadh',tadh+'%');
+  setBar('rf1','rfp1','rfc1',tenv,tenv,fmtN(env)+' msgs');
+  setBar('rf2','rfp2','rfc2',tent,tent,fmtN(ent)+' entregados');
+  setBar('rf3','rfp3','rfc3',tadh,tadh,fmtN(adh)+' leídos');
+  var tNoLL=pct(nll,env);
+  setBar('rf4','rfp4','rfc4',Math.min(30,parseFloat(tNoLL)*3),tNoLL,fmtN(nll)+' fallidos');
+  tx('r-ia',fmt(ent*RP.imp[0]/100)); tx('r-im',fmt(ent*RP.imp[1]/100)); tx('r-ib',fmt(ent*RP.imp[2]/100));
+}
+
+
+// ═══ TAB NAVIGATION ═══
+document.getElementById('NAV').addEventListener('click',function(e){
+  var t=e.target.closest('.tab');
+  if(!t) return;
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  t.classList.add('on');
+  var p=document.getElementById(t.dataset.p);
+  if(p) p.classList.add('on');
+  // Refrescar gráficas y métricas al cambiar de pestaña
+  var m = el('G_MES') ? el('G_MES').value : '99';
+  // resize + update charts so hidden-panel charts render correctly
+  Object.keys(CHARTS).forEach(function(k){
+    var c=CHARTS[k]; if(c && c.resize) c.resize();
+  });
+  if(Object.keys(CHARTS).length>0){
+    updateCharts(m);
+    applyG(m); applyETA(m); applyNP(m); applyRP(m);
+  }
 });
-function initFilters(){
-  function applyG(){
-    var f=document.getElementById('g-f').value,m=document.getElementById('g-m').value;
-    var isMes=m!=='all',mi=parseInt(m);
-    var etaV=(f==='np'||f==='rp')?0:(isMes?D.etaMes.v[mi]:59971);
-    var npV=(f==='eta'||f==='rp')?0:(isMes?D.npByMes[mi].tot:5432);
-    var rpV=(f==='eta'||f==='np')?0:(isMes?D.rpVol[mi]:9308);
-    var tot=etaV+npV+rpV;
-    S('gk0',N(tot));S('gk1',N(etaV));S('gk2',N(npV));S('gk3',N(rpV));
-    S('tc0',N(etaV));S('tc1',N(npV));S('tc2',N(rpV));S('tc3',N(tot));
-    S('gb0',f==='all'&&!isMes?'Todo':'Filtrado');
-    CH.g0.data.datasets[0].data=[etaV,npV,rpV];CH.g0.update('active');
-    var mnl=['Ene','Feb','Mar','Abr'];
-    S('gb1',isMes?mnl[mi]:'Ene-Abr');S('gb2',N(npV)+' clientes');S('gb3',N(rpV)+' replan.');
-  }
-  document.getElementById('g-f').addEventListener('change',applyG);
-  document.getElementById('g-m').addEventListener('change',applyG);
-  document.getElementById('g-rst').addEventListener('click',function(){document.querySelectorAll('#p1 select').forEach(function(s){s.selectedIndex=0;});applyG();});
-  document.getElementById('MOMS').addEventListener('click',function(e){
-    var mc=e.target.closest('.mc');if(!mc)return;
-    var mi=mc.getAttribute('data-mi');
-    document.querySelectorAll('.mc').forEach(function(c){c.classList.remove('sel');});mc.classList.add('sel');
-    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
-    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
-    document.querySelector('[data-panel="p3"]').classList.add('on');document.getElementById('p3').classList.add('on');
-    document.getElementById('n-m').value=String(mi);applyNP();
+
+// ═══ CHART.JS ═══
+var CO={responsive:true,maintainAspectRatio:true,
+  plugins:{legend:{labels:{color:'#7b84b0',font:{size:10},boxWidth:12}}},
+  scales:{x:{ticks:{color:'#7b84b0',font:{size:10}},grid:{color:'#1e2240'}},
+          y:{ticks:{color:'#7b84b0',font:{size:10}},grid:{color:'#1e2240'}}}
+};
+var CO_H=JSON.parse(JSON.stringify(CO));
+CO_H.indexAxis='y';
+
+var CHARTS = {};
+
+function mkBar(id,labels,datasets,opts){
+  var ctx=el(id); if(!ctx) return null;
+  var cfg=JSON.parse(JSON.stringify(CO));
+  if(opts) Object.assign(cfg,opts);
+  return new Chart(ctx,{type:'bar',data:{labels:labels,datasets:datasets},options:cfg});
+}
+function mkLine(id,labels,datasets){
+  var ctx=el(id); if(!ctx) return null;
+  return new Chart(ctx,{type:'line',data:{labels:labels,datasets:datasets},options:CO});
+}
+function mkDonut(id,labels,data,colors){
+  var ctx=el(id); if(!ctx) return null;
+  return new Chart(ctx,{type:'doughnut',
+    data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:true,cutout:'60%',
+      plugins:{legend:{position:'bottom',labels:{color:'#7b84b0',font:{size:10},boxWidth:10}}}}
   });
-  function applyE(){
-    var mes=document.getElementById('e-mes').value,mun=document.getElementById('e-m').value,tur=document.getElementById('e-t').value;
-    var isMes=mes!=='all',mi=parseInt(mes),baseTot=isMes?D.etaMes.v[mi]:59971;
-    var fLabs,fVals,mLabs,mVals,tot;
-    if(tur==='all'){fLabs=D.etaFrTop.l;fVals=D.etaFrTop.v.map(function(v){return isMes?Math.round(v*(baseTot/59971)):v;});tot=baseTot;}
-    else{var td=D.etaTurno[tur];fLabs=td.l;fVals=td.v.map(function(v){return isMes?Math.round(v*(baseTot/59971)):v;});tot=isMes?Math.round(td.tot*(baseTot/59971)):td.tot;}
-    if(mun==='all'){mLabs=D.etaMun.l;mVals=D.etaMun.v.map(function(v){return isMes?Math.round(v*(baseTot/59971)):v;});}
-    else{var idx=D.etaMun.l.indexOf(mun);mLabs=[mun];var mv=idx>=0?D.etaMun.v[idx]:0;mVals=[isMes?Math.round(mv*(baseTot/59971)):mv];if(idx>=0)tot=mVals[0];}
-    S('ek0',N(tot));S('ek1',N(tot));S('ek2',mun==='all'?'39':'1');
-    S('eb0',N(tot)+' msgs');S('eb1',(mun==='all'?'39':'1')+' mun.');
-    S('eb-mes',N(baseTot)+' '+(isMes?['Enero','Febrero','Marzo','Abril'][mi]:'total'));
-    S('es0',tur==='all'?'Top franjas':'Turno '+tur);S('es1',mun==='all'?'Top 15':'Municipio: '+mun);
-    upd(CH.e0,fLabs,fVals);CH.e0.data.datasets[0].backgroundColor=fVals.map(function(v,i){return i===0?C.bl(.9):C.bl(.38);});CH.e0.update('active');
-    upd(CH.e1,mLabs,mVals);CH.e1.update('active');
-    var evLabs=isMes?[['Enero','Febrero','Marzo','Abril'][mi]]:D.etaMes.l;
-    var evVals=isMes?[D.etaMes.v[mi]]:D.etaMes.v;
-    upd(CH.e3,evLabs,evVals);
-    var cols=[C.bl(.9),C.gr(.8),C.am(.85),C.pu(.8)];
-    CH.e3.data.datasets[0].backgroundColor=evVals.map(function(_,i){return isMes?cols[mi]:cols[i];});CH.e3.update('active');
+}
+function mkHBar(id,labels,data,color){
+  var ctx=el(id); if(!ctx) return null;
+  return new Chart(ctx,{type:'bar',
+    data:{labels:labels,datasets:[{data:data,backgroundColor:color||'#3b82f688',borderRadius:3}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#7b84b0',font:{size:10}},grid:{color:'#1e2240'}},
+              y:{ticks:{color:'#7b84b0',font:{size:10}},grid:{display:false}}}}
+  });
+}
+
+// Tasas por mes para charts de línea
+var ENV_RATE = MES.map(function(_,i){ return (ETA.env[i]/ETA.prog[i]*100).toFixed(1)*1; });
+var ENT_RATE = MES.map(function(_,i){ return (ETA.ent[i]/ETA.env[i]*100).toFixed(1)*1; });
+var ADH_RATE = MES.map(function(_,i){ return (ETA.adh[i]/ETA.ent[i]*100).toFixed(1)*1; });
+var N_ENV_RATE = MES.map(function(_,i){ return (NP.env[i]/NP.prog[i]*100).toFixed(1)*1; });
+var N_ENT_RATE = MES.map(function(_,i){ return (NP.ent[i]/NP.env[i]*100).toFixed(1)*1; });
+var N_ADH_RATE = MES.map(function(_,i){ return (NP.adh[i]/NP.ent[i]*100).toFixed(1)*1; });
+var R_ENV_RATE = MES.map(function(_,i){ return (RP.env[i]/RP.prog[i]*100).toFixed(1)*1; });
+var R_ENT_RATE = MES.map(function(_,i){ return (RP.ent[i]/RP.env[i]*100).toFixed(1)*1; });
+var R_ADH_RATE = MES.map(function(_,i){ return (RP.adh[i]/RP.ent[i]*100).toFixed(1)*1; });
+
+// Plug de referencia 80% y 88%
+function addRefLine(chart,val,color,label){
+  chart.data.datasets.push({
+    type:'line',label:label,data:MES.map(function(){return val;}),
+    borderColor:color,borderWidth:1.5,borderDash:[4,4],
+    pointRadius:0,fill:false,tension:0
+  });
+  chart.update();
+}
+
+// Totales por mes (ETA+NP+RP)
+var G_PROG=MES.map(function(_,i){return ETA.prog[i]+NP.prog[i]+RP.prog[i];});
+var G_ENV=MES.map(function(_,i){return ETA.env[i]+NP.env[i]+RP.env[i];});
+var G_ENT=MES.map(function(_,i){return ETA.ent[i]+NP.ent[i]+RP.ent[i];});
+var G_ADH=MES.map(function(_,i){return ETA.adh[i]+NP.adh[i]+RP.adh[i];});
+
+
+function updateCharts(m){
+  var idxs=getIdxs(m);
+  var labels=idxs.map(function(i){return MES[i];});
+
+  // Ratios para zonas proporcionales
+  var etaTot=ETA.prog.reduce(function(a,b){return a+b;},0);
+  var npTot=NP.prog.reduce(function(a,b){return a+b;},0);
+  var rpTot=RP.prog.reduce(function(a,b){return a+b;},0);
+  var allTot=etaTot+npTot+rpTot;
+  var etaSel=sum(ETA.prog,idxs);
+  var npSel=sum(NP.prog,idxs);
+  var rpSel=sum(RP.prog,idxs);
+  var allSel=etaSel+npSel+rpSel;
+  var eR=etaTot?etaSel/etaTot:1;
+  var nR=npTot?npSel/npTot:1;
+  var rR=rpTot?rpSel/rpTot:1;
+  var gR=allTot?allSel/allTot:1;
+
+  // Global bar
+  if(CHARTS.gc1){
+    CHARTS.gc1.data.labels=labels;
+    CHARTS.gc1.data.datasets[0].data=idxs.map(function(i){return G_PROG[i];});
+    CHARTS.gc1.data.datasets[1].data=idxs.map(function(i){return G_ENV[i];});
+    CHARTS.gc1.data.datasets[2].data=idxs.map(function(i){return G_ENT[i];});
+    CHARTS.gc1.resize(); CHARTS.gc1.update();
   }
-  document.getElementById('e-mes').addEventListener('change',applyE);
-  document.getElementById('e-m').addEventListener('change',applyE);
-  document.getElementById('e-t').addEventListener('change',applyE);
-  document.getElementById('e-rst').addEventListener('click',function(){document.querySelectorAll('#p2 select').forEach(function(s){s.selectedIndex=0;});applyE();});
-  function applyNP(){
-    var m=document.getElementById('n-m').value,mo=document.getElementById('n-mo').value;
-    var tc=parseFloat(document.getElementById('n-t').value)||1;
-    var isMes=m!=='all',mi=parseInt(m),bm=isMes?D.npByMes[mi]:null;
-    var tot=isMes?bm.tot:5432,motV=isMes?bm.mv.slice():D.npMot.v.slice();
-    var ss=isMes?bm.ss:3794,rc=isMes?bm.rc:875,si=isMes?bm.si:456;
-    if(mo!=='all'){var moi=parseInt(mo);tot=motV[moi]||0;ss=mo==='0'?ss:0;rc=mo==='1'?rc:0;si=mo==='2'?si:0;motV=motV.map(function(v,i){return i===moi?v:0;});}
-    if(tc<1){tot=Math.round(tot*tc);ss=Math.round(ss*tc);rc=Math.round(rc*tc);si=Math.round(si*tc);motV=motV.map(function(v){return Math.round(v*tc);});}
-    var mns=['Enero','Febrero','Marzo','Abril'];
-    S('nk0',N(tot));S('nk1',isMes?mns[mi]:'Todos');
-    S('nk1s',isMes?('Total '+N(D.npByMes[mi].tot)+' en '+mns[mi]):'Ene(2941) Feb(2663) Mar(2274) Abr(2745)');
-    S('nk2',N(ss));S('nk2s',P(ss,tot)+' del filtro');S('nk3',N(rc));S('nk3s',P(rc,tot)+' gestion comercial');S('nk4',N(si));
-    S('nb0',N(tot)+' clientes');S('nb1',isMes?mns[mi]:'Ene-Abr');
-    CH.n0.data.datasets[0].data=motV;CH.n0.update('active');
-    CH.n1.data.datasets[0].pointBackgroundColor=[0,1,2,3].map(function(i){return(!isMes||i===mi)?C.am(1):C.gy(.4);});
-    CH.n1.data.datasets[0].pointRadius=[0,1,2,3].map(function(i){return(!isMes||i===mi)?7:3;});CH.n1.update('active');
-    if(isMes){CH.n3.data.datasets[0].data=D.npMotMes.ss.map(function(v,i){return i===mi?v:0;});CH.n3.data.datasets[1].data=D.npMotMes.rc.map(function(v,i){return i===mi?v:0;});CH.n3.data.datasets[2].data=D.npMotMes.si.map(function(v,i){return i===mi?v:0;});CH.n3.data.datasets[3].data=D.npMotMes.ot.map(function(v,i){return i===mi?v:0;});}
-    else{CH.n3.data.datasets[0].data=D.npMotMes.ss;CH.n3.data.datasets[1].data=D.npMotMes.rc;CH.n3.data.datasets[2].data=D.npMotMes.si;CH.n3.data.datasets[3].data=D.npMotMes.ot;}
-    CH.n3.update('active');
-  }
-  document.getElementById('n-m').addEventListener('change',applyNP);
-  document.getElementById('n-mo').addEventListener('change',applyNP);
-  document.getElementById('n-t').addEventListener('change',applyNP);
-  document.getElementById('n-rst').addEventListener('click',function(){document.querySelectorAll('#p3 select').forEach(function(s){s.selectedIndex=0;});document.querySelectorAll('.mc').forEach(function(c){c.classList.remove('sel');});applyNP();});
-  function applyRP(){
-    var m=document.getElementById('r-m').value,e=document.getElementById('r-e').value,t=document.getElementById('r-t').value;
-    var isMes=m!=='all',mi=parseInt(m);
-    var vols=isMes?[D.rpVol[mi]]:D.rpVol,ents=isMes?[D.rpEnt[mi]]:D.rpEnt,recs=isMes?[D.rpRec[mi]]:D.rpRec;
-    var tvs=isMes?[D.rpTV[mi]]:D.rpTV,tss=isMes?[D.rpTS[mi]]:D.rpTS,tas=isMes?[D.rpTasa[mi]]:D.rpTasa,labs=isMes?[D.rpMes[mi]]:D.rpMes;
-    var totRP=vols.reduce(function(a,b){return a+b;},0),totE=ents.reduce(function(a,b){return a+b;},0),totR=recs.reduce(function(a,b){return a+b;},0);
-    var totTV=tvs.reduce(function(a,b){return a+b;},0),totTS=tss.reduce(function(a,b){return a+b;},0);
-    if(e==='ent'){totRP=totE;totR=0;}if(e==='rec'){totRP=totR;totE=0;}
-    if(t==='val')totRP=Math.min(totRP,totTV);if(t==='sin')totRP=Math.min(totRP,totTS);
-    S('rk0',N(totRP));S('rk0s',(isMes?D.rpMes[mi]:'Ene-Abr')+' | Consolidado 2026');
-    S('rk1',N(totE));S('rk1s',P(totE,totRP)+' pago contado');S('rk2',N(totR));S('rk2s',P(totR,totRP)+' credito');
-    S('rk3',N(totTV));S('rk3s',P(totTV,totRP)+' contactabilidad WA 57col');S('rk4',N(totTS));
-    S('rk5',isMes?D.rpMes[mi]:'Abril');S('rk5s',N(isMes?vols[0]:4860)+' ('+(isMes?((vols[0]/9308*100).toFixed(1)+'%'):52.2+'%')+')'); 
-    S('rb0',N(totRP)+' replan.');S('rb1',isMes?D.rpMes[mi]:'Ene-Abr');
-    upd(CH.r0,labs,vols);CH.r0.data.datasets[0].backgroundColor=vols.map(function(_,i){return C.pu(0.85-i*0.2);});CH.r0.update('active');
-    upd(CH.r1,labs,ents,0);upd(CH.r1,labs,recs,1);CH.r1.update('active');
-    upd(CH.r2,labs,tvs,0);upd(CH.r2,labs,tss,1);CH.r2.update('active');
-    upd(CH.r3,labs,tas);CH.r3.update('active');
-  }
-  document.getElementById('r-m').addEventListener('change',applyRP);
-  document.getElementById('r-e').addEventListener('change',applyRP);
-  document.getElementById('r-t').addEventListener('change',applyRP);
-  document.getElementById('r-rst').addEventListener('click',function(){document.querySelectorAll('#p4 select').forEach(function(s){s.selectedIndex=0;});applyRP();});
-  var _filt=DET;
-  function applyD(){
-    var cli=(document.getElementById('d-cli').value||'').toLowerCase().trim();
-    var src=document.getElementById('d-src').value,mes=document.getElementById('d-mes').value;
-    var mun=document.getElementById('d-mun').value,est=document.getElementById('d-est').value;
-    _filt=DET.filter(function(r){
-      if(cli&&r.nom.toLowerCase().indexOf(cli)===-1)return false;
-      if(src!=='all'&&r.tipo!==src)return false;
-      if(mes!=='all'&&r.mes!==parseInt(mes))return false;
-      if(mun!=='all'&&r.mun!==mun)return false;
-      if(est!=='all'&&r.est!==est)return false;
-      return true;
+  // Global zona hbar
+  if(CHARTS.gc2){
+    CHARTS.gc2.data.datasets[0].data=ZONAS.map(function(_,i){
+      return Math.round((ETA.zona[i]+NP.zona[i]+RP.zona[i])*gR);
     });
-    var etaC=_filt.filter(function(r){return r.tipo==='ETA';}).length;
-    var npC=_filt.filter(function(r){return r.tipo==='NP';}).length;
-    var rpC=_filt.filter(function(r){return r.tipo==='RP';}).length;
-    var tot=_filt.length;
-    S('dk0',N(tot));S('dk0s','de '+N(DET.length)+' en muestra');
-    S('dk1',N(etaC));S('dk1s',P(etaC,tot)+' de registros');
-    S('dk2',N(npC));S('dk2s',P(npC,tot)+' de registros');
-    S('dk3',N(rpC));S('dk3s',P(rpC,tot)+' de registros');
-    renderDetail(_filt,1);
+    CHARTS.gc2.resize(); CHARTS.gc2.update();
   }
-  document.getElementById('d-cli').addEventListener('input',applyD);
-  document.getElementById('d-src').addEventListener('change',applyD);
-  document.getElementById('d-mes').addEventListener('change',applyD);
-  document.getElementById('d-mun').addEventListener('change',applyD);
-  document.getElementById('d-est').addEventListener('change',applyD);
-  document.getElementById('d-rst').addEventListener('click',function(){document.getElementById('d-cli').value='';document.querySelectorAll('#p5 select').forEach(function(s){s.selectedIndex=0;});applyD();});
-  function syncGlobal(m){
-    var el=document.getElementById('g-m');if(el)el.value=m;
-    var em=document.getElementById('e-mes');if(em)em.value=m;
-    var nm=document.getElementById('n-m');if(nm)nm.value=m;
-    var rm=document.getElementById('r-m');
-    if(rm){rm.value=m;}
-    var dm=document.getElementById('d-mes');if(dm)dm.value=m;
-    applyG();applyE();applyNP();applyRP();applyD();
+  // Global line rates
+  if(CHARTS.gc3){
+    CHARTS.gc3.data.labels=labels;
+    CHARTS.gc3.data.datasets[0].data=idxs.map(function(i){return (G_ENV[i]/G_PROG[i]*100).toFixed(1)*1;});
+    CHARTS.gc3.data.datasets[1].data=idxs.map(function(i){return (G_ENT[i]/G_ENV[i]*100).toFixed(1)*1;});
+    CHARTS.gc3.data.datasets[2].data=idxs.map(function(i){return (G_ADH[i]/G_ENT[i]*100).toFixed(1)*1;});
+    if(CHARTS.gc3.data.datasets[3]) CHARTS.gc3.data.datasets[3].data=labels.map(function(){return 80;});
+    if(CHARTS.gc3.data.datasets[4]) CHARTS.gc3.data.datasets[4].data=labels.map(function(){return 88;});
+    CHARTS.gc3.resize(); CHARTS.gc3.update();
   }
-  document.getElementById('glo-m').addEventListener('change',function(){syncGlobal(this.value);});
-  document.getElementById('glo-rst').addEventListener('click',function(){
-    document.getElementById('glo-m').value='all';document.getElementById('d-cli').value='';
-    document.querySelectorAll('select').forEach(function(s){s.selectedIndex=0;});
-    document.querySelectorAll('.mc').forEach(function(c){c.classList.remove('sel');});
-    applyG();applyE();applyNP();applyRP();applyD();
-  });
+  // ETA bar
+  if(CHARTS.ec1){
+    CHARTS.ec1.data.labels=labels;
+    CHARTS.ec1.data.datasets[0].data=idxs.map(function(i){return ETA.prog[i];});
+    CHARTS.ec1.data.datasets[1].data=idxs.map(function(i){return ETA.env[i];});
+    CHARTS.ec1.data.datasets[2].data=idxs.map(function(i){return ETA.ent[i];});
+    CHARTS.ec1.data.datasets[3].data=idxs.map(function(i){return ETA.adh[i];});
+    CHARTS.ec1.resize(); CHARTS.ec1.update();
+  }
+  // ETA zona hbar
+  if(CHARTS.ec2){
+    CHARTS.ec2.data.datasets[0].data=ETA.zona.map(function(v){return Math.round(v*eR);});
+    CHARTS.ec2.resize(); CHARTS.ec2.update();
+  }
+  // ETA line rates
+  if(CHARTS.ec4){
+    CHARTS.ec4.data.labels=labels;
+    CHARTS.ec4.data.datasets[0].data=idxs.map(function(i){return ENV_RATE[i];});
+    CHARTS.ec4.data.datasets[1].data=idxs.map(function(i){return ENT_RATE[i];});
+    CHARTS.ec4.data.datasets[2].data=idxs.map(function(i){return ADH_RATE[i];});
+    if(CHARTS.ec4.data.datasets[3]) CHARTS.ec4.data.datasets[3].data=labels.map(function(){return 80;});
+    if(CHARTS.ec4.data.datasets[4]) CHARTS.ec4.data.datasets[4].data=labels.map(function(){return 88;});
+    CHARTS.ec4.resize(); CHARTS.ec4.update();
+  }
+  // NP bar
+  if(CHARTS.nc1){
+    CHARTS.nc1.data.labels=labels;
+    CHARTS.nc1.data.datasets[0].data=idxs.map(function(i){return NP.prog[i];});
+    CHARTS.nc1.data.datasets[1].data=idxs.map(function(i){return NP.env[i];});
+    CHARTS.nc1.data.datasets[2].data=idxs.map(function(i){return NP.ent[i];});
+    CHARTS.nc1.data.datasets[3].data=idxs.map(function(i){return NP.adh[i];});
+    CHARTS.nc1.resize(); CHARTS.nc1.update();
+  }
+  // NP zona hbar
+  if(CHARTS.nc2){
+    CHARTS.nc2.data.datasets[0].data=NP.zona.map(function(v){return Math.round(v*nR);});
+    CHARTS.nc2.resize(); CHARTS.nc2.update();
+  }
+  // NP line rates
+  if(CHARTS.nc4){
+    CHARTS.nc4.data.labels=labels;
+    CHARTS.nc4.data.datasets[0].data=idxs.map(function(i){return N_ENV_RATE[i];});
+    CHARTS.nc4.data.datasets[1].data=idxs.map(function(i){return N_ENT_RATE[i];});
+    CHARTS.nc4.data.datasets[2].data=idxs.map(function(i){return N_ADH_RATE[i];});
+    if(CHARTS.nc4.data.datasets[3]) CHARTS.nc4.data.datasets[3].data=labels.map(function(){return 80;});
+    if(CHARTS.nc4.data.datasets[4]) CHARTS.nc4.data.datasets[4].data=labels.map(function(){return 88;});
+    CHARTS.nc4.resize(); CHARTS.nc4.update();
+  }
+  // RP bar
+  if(CHARTS.rc1){
+    CHARTS.rc1.data.labels=labels;
+    CHARTS.rc1.data.datasets[0].data=idxs.map(function(i){return RP.prog[i];});
+    CHARTS.rc1.data.datasets[1].data=idxs.map(function(i){return RP.env[i];});
+    CHARTS.rc1.data.datasets[2].data=idxs.map(function(i){return RP.ent[i];});
+    CHARTS.rc1.data.datasets[3].data=idxs.map(function(i){return RP.adh[i];});
+    CHARTS.rc1.resize(); CHARTS.rc1.update();
+  }
+  // RP zona hbar
+  if(CHARTS.rc2){
+    CHARTS.rc2.data.datasets[0].data=RP.zona.map(function(v){return Math.round(v*rR);});
+    CHARTS.rc2.resize(); CHARTS.rc2.update();
+  }
+  // RP line rates
+  if(CHARTS.rc4){
+    CHARTS.rc4.data.labels=labels;
+    CHARTS.rc4.data.datasets[0].data=idxs.map(function(i){return R_ENV_RATE[i];});
+    CHARTS.rc4.data.datasets[1].data=idxs.map(function(i){return R_ENT_RATE[i];});
+    CHARTS.rc4.data.datasets[2].data=idxs.map(function(i){return R_ADH_RATE[i];});
+    if(CHARTS.rc4.data.datasets[3]) CHARTS.rc4.data.datasets[3].data=labels.map(function(){return 80;});
+    if(CHARTS.rc4.data.datasets[4]) CHARTS.rc4.data.datasets[4].data=labels.map(function(){return 88;});
+    CHARTS.rc4.resize(); CHARTS.rc4.update();
+  }
 }
-var PAGE_SIZE=25;
-function renderDetail(data,page){
-  var total=data.length,pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
-  page=Math.min(page,pages);
-  S('dk4',page);S('dk4s','de '+pages+' paginas');
-  var start=(page-1)*PAGE_SIZE,end=Math.min(start+PAGE_SIZE,total),slice=data.slice(start,end);
-  var tb=document.getElementById('dtb');tb.innerHTML='';
-  var tgM={ETA:'e',NP:'n',RP:'r'},bM={Enviado:'g',Entregado:'g',Recogido:'a',Pendiente:'n'};
-  slice.forEach(function(r,i){
-    var tr=document.createElement('tr');var bc=bM[r.est]||'r';
-    tr.innerHTML='<td>'+(start+i+1)+'</td><td><span class="tg '+tgM[r.tipo]+'">'+r.tipo+'</span></td>'+
-      '<td style="font-family:monospace;font-size:.68rem">'+r.cod+'</td><td><strong>'+r.nom+'</strong></td>'+
-      '<td>'+r.mun+'</td><td style="font-family:monospace;font-size:.68rem">'+r.tel+'</td>'+
-      '<td>'+r.mnom+'</td><td><span class="b '+bc+'">'+r.est+'</span></td>'+
-      '<td class="mcell" title="'+r.msg+'">'+r.msg+'</td>';
-    tb.appendChild(tr);
-  });
-  var pag=document.getElementById('DPAG');pag.innerHTML='';
-  function mkB(lbl,pg,act,dis){var b=document.createElement('button');b.textContent=lbl;if(act)b.classList.add('on');if(dis)b.disabled=true;b.addEventListener('click',function(){renderDetail(data,pg);});return b;}
-  pag.appendChild(mkB('Anterior',page-1,false,page===1));
-  var si=document.createElement('span');si.className='pi';si.textContent='Pag. '+page+' / '+pages+' ('+N(total)+' registros)';pag.appendChild(si);
-  var s2=Math.max(1,page-2),e2=Math.min(pages,page+2);
-  for(var p=s2;p<=e2;p++)pag.appendChild(mkB(String(p),p,p===page,false));
-  pag.appendChild(mkB('Siguiente',page+1,false,page===pages));
-}
+window.addEventListener('load',function(){
+  // G CHART 1 — Evolución global
+  CHARTS.gc1 = mkBar('gc1',MES,[
+    {label:'Programados',data:G_PROG,backgroundColor:'#3b82f644',borderRadius:3},
+    {label:'Enviados',data:G_ENV,backgroundColor:'#22c55e88',borderRadius:3},
+    {label:'Entregados',data:G_ENT,backgroundColor:'#a855f788',borderRadius:3}
+  ]);
+
+  // G CHART 2 — Zonas (ETA+NP+RP)
+  var totZona=ZONAS.map(function(_,i){return ETA.zona[i]+NP.zona[i]+RP.zona[i];});
+  CHARTS.gc2 = mkHBar('gc2',ZONAS,totZona,'#06b6d488');
+
+  // G CHART 3 — Tasas globales
+  var G_ENV_R=MES.map(function(_,i){return (G_ENV[i]/G_PROG[i]*100).toFixed(1)*1;});
+  var G_ENT_R=MES.map(function(_,i){return (G_ENT[i]/G_ENV[i]*100).toFixed(1)*1;});
+  var G_ADH_R=MES.map(function(_,i){return (G_ADH[i]/G_ENT[i]*100).toFixed(1)*1;});
+  CHARTS.gc3 = mkLine('gc3',MES,[
+    {label:'% Envío',data:G_ENV_R,borderColor:'#3b82f6',backgroundColor:'#3b82f622',fill:true,tension:.3,pointRadius:3},
+    {label:'% Entrega',data:G_ENT_R,borderColor:'#22c55e',backgroundColor:'#22c55e11',fill:true,tension:.3,pointRadius:3},
+    {label:'% Adherencia',data:G_ADH_R,borderColor:'#a855f7',backgroundColor:'#a855f711',fill:true,tension:.3,pointRadius:3}
+  ]);
+  addRefLine(CHARTS.gc3,80,'#f59e0b','Umbral 80%'); addRefLine(CHARTS.gc3,88,'#06b6d4','Objetivo 88%');
+
+  // ETA CHART 1
+  CHARTS.ec1 = mkBar('ec1',MES,[
+    {label:'Programados',data:ETA.prog,backgroundColor:'#3b82f644',borderRadius:3},
+    {label:'Enviados',data:ETA.env,backgroundColor:'#22c55e88',borderRadius:3},
+    {label:'Entregados',data:ETA.ent,backgroundColor:'#06b6d488',borderRadius:3},
+    {label:'Adherencia',data:ETA.adh,backgroundColor:'#a855f788',borderRadius:3}
+  ]);
+  CHARTS.ec2 = mkHBar('ec2',ZONAS,ETA.zona,'#3b82f688');
+  CHARTS.ec3 = mkDonut('ec3',['Alto','Medio','Bajo'],ETA.imp,['#22c55e','#f59e0b','#7b84b0']);
+  CHARTS.ec4 = mkLine('ec4',MES,[
+    {label:'% Envío',data:ENV_RATE,borderColor:'#3b82f6',tension:.3,pointRadius:3,fill:false},
+    {label:'% Entrega',data:ENT_RATE,borderColor:'#22c55e',tension:.3,pointRadius:3,fill:false},
+    {label:'% Adherencia',data:ADH_RATE,borderColor:'#a855f7',tension:.3,pointRadius:3,fill:false}
+  ]);
+  addRefLine(CHARTS.ec4,80,'#f59e0b','Umbral 80%'); addRefLine(CHARTS.ec4,88,'#06b6d4','Objetivo 88%');
+
+  // NP CHART 1
+  CHARTS.nc1 = mkBar('nc1',MES,[
+    {label:'Programados',data:NP.prog,backgroundColor:'#f59e0b44',borderRadius:3},
+    {label:'Enviados',data:NP.env,backgroundColor:'#22c55e88',borderRadius:3},
+    {label:'Entregados',data:NP.ent,backgroundColor:'#06b6d488',borderRadius:3},
+    {label:'Adherencia',data:NP.adh,backgroundColor:'#a855f788',borderRadius:3}
+  ]);
+  CHARTS.nc2 = mkHBar('nc2',ZONAS,NP.zona,'#f59e0b88');
+  CHARTS.nc3 = mkDonut('nc3',['Alto','Medio','Bajo'],NP.imp,['#22c55e','#f59e0b','#7b84b0']);
+  CHARTS.nc4 = mkLine('nc4',MES,[
+    {label:'% Envío',data:N_ENV_RATE,borderColor:'#3b82f6',tension:.3,pointRadius:3,fill:false},
+    {label:'% Entrega',data:N_ENT_RATE,borderColor:'#22c55e',tension:.3,pointRadius:3,fill:false},
+    {label:'% Adherencia',data:N_ADH_RATE,borderColor:'#a855f7',tension:.3,pointRadius:3,fill:false}
+  ]);
+  addRefLine(CHARTS.nc4,80,'#f59e0b','Umbral 80%'); addRefLine(CHARTS.nc4,88,'#06b6d4','Objetivo 88%');
+
+  // RP CHART 1
+  CHARTS.rc1 = mkBar('rc1',MES,[
+    {label:'Programados',data:RP.prog,backgroundColor:'#a855f744',borderRadius:3},
+    {label:'Enviados',data:RP.env,backgroundColor:'#22c55e88',borderRadius:3},
+    {label:'Entregados',data:RP.ent,backgroundColor:'#06b6d488',borderRadius:3},
+    {label:'Adherencia',data:RP.adh,backgroundColor:'#6366f188',borderRadius:3}
+  ]);
+  CHARTS.rc2 = mkHBar('rc2',ZONAS,RP.zona,'#a855f788');
+  CHARTS.rc3 = mkDonut('rc3',['Alto','Medio','Bajo'],RP.imp,['#22c55e','#f59e0b','#7b84b0']);
+  CHARTS.rc4 = mkLine('rc4',MES,[
+    {label:'% Envío',data:R_ENV_RATE,borderColor:'#3b82f6',tension:.3,pointRadius:3,fill:false},
+    {label:'% Entrega',data:R_ENT_RATE,borderColor:'#22c55e',tension:.3,pointRadius:3,fill:false},
+    {label:'% Adherencia',data:R_ADH_RATE,borderColor:'#a855f7',tension:.3,pointRadius:3,fill:false}
+  ]);
+  addRefLine(CHARTS.rc4,80,'#f59e0b','Umbral 80%'); addRefLine(CHARTS.rc4,88,'#06b6d4','Objetivo 88%');
+
+  // Init
+  applyG(99); applyETA(99); applyNP(99); applyRP(99);
+ 
+  updateCharts(99);
+});
 </script>
+<div class="lis-brand">
+  <div class="lis-brand-icon">LIS</div>
+  <div class="lis-brand-text">
+    <div class="lis-brand-name">LIS ChatMasivo</div>
+    <div class="lis-brand-sub">Última Milla · Antioquia 2026</div>
+  </div>
+</div>
 </body>
 </html>
