@@ -1,752 +1,791 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LIS ChatMasivo – Dashboard DPO v3</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LIS Chat Masivo &middot; Dashboard Operativo DPO 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{
-  --bg:#0d0f1a;--s:#131628;--s2:#1b1f35;--s3:#222640;
-  --bd:#2a2f50;--tx:#e2e8ff;--tx2:#7b84b0;--tx3:#4a5080;
-  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;
-  --blue:#3b82f6;--purple:#a855f7;--cyan:#06b6d4;--indigo:#6366f1;
-  --r:10px;--r2:6px;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--tx);font:13px/1.5 'Segoe UI',system-ui,sans-serif;min-height:100vh}
-/* Nav */
-#NAV{display:flex;gap:2px;padding:10px 18px 0;background:var(--s);border-bottom:1px solid var(--bd);flex-wrap:wrap;position:sticky;top:0;z-index:100}
-.tab{background:none;border:none;color:var(--tx2);cursor:pointer;padding:8px 14px;border-radius:7px 7px 0 0;font:13px 'Segoe UI',system-ui,sans-serif;transition:.15s;white-space:nowrap}
-.tab:hover{color:var(--tx);background:var(--s2)}
-.tab.on{color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-bottom:1px solid var(--bg);font-weight:600}
-/* Header */
-#HDR{background:var(--s);border-bottom:1px solid var(--bd);padding:9px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-#HDR .title{font-size:14px;font-weight:700;flex:1;display:flex;align-items:center;gap:8px}
-#HDR .title span{font-size:11px;font-weight:400;color:var(--tx2)}
-.chip{border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600}
-.chip-may{background:#7c3aed22;border:1px solid #7c3aed66;color:#a78bfa}
-.chip-ok{background:#22c55e22;border:1px solid #22c55e66;color:#22c55e}
-.hctrl{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2)}
-select{background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:5px 8px;border-radius:var(--r2);font:12px 'Segoe UI',system-ui,sans-serif;cursor:pointer;min-width:100px}
-/* Panels */
-.lis-brand{
-  position:fixed;bottom:14px;right:18px;
-  display:flex;align-items:center;gap:7px;
-  background:rgba(11,14,35,0.82);
-  border:1px solid rgba(99,102,241,0.35);
-  border-radius:20px;padding:5px 12px 5px 8px;
-  backdrop-filter:blur(6px);
-  opacity:0.75;transition:opacity .2s;z-index:999;
-  pointer-events:none;
-}
+:root{--bg:#060d1a;--s:#0d1829;--s2:#111f35;--bd:#1e3352;--bd2:#253d5e;--blue:#0ea5e9;--blue2:#38bdf8;--green:#22c55e;--green2:#4ade80;--amber:#f59e0b;--amber2:#fbbf24;--red:#ef4444;--red2:#fca5a5;--purple:#a855f7;--purple2:#d8b4fe;--tx:#e2e8f0;--tx2:#94a3b8;--tx3:#64748b;--r:12px;--r2:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+header{background:linear-gradient(180deg,#0a1628,var(--s));border-bottom:1px solid var(--bd2);padding:0 26px}
+.hdr{display:flex;align-items:center;justify-content:space-between;height:56px}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#25d366,#128c7e);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff}
+.brand h1{font-size:.88rem;font-weight:700}.brand p{font-size:.65rem;color:var(--tx3);margin-top:1px}
+.hbs{display:flex;gap:5px}
+.hb{padding:2px 8px;border-radius:20px;font-size:.61rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.hb.g{background:rgba(34,197,94,.1);color:var(--green2);border:1px solid rgba(34,197,94,.2)}
+.hb.b{background:rgba(14,165,233,.1);color:var(--blue2);border:1px solid rgba(14,165,233,.2)}
+.hb.n{background:rgba(100,116,139,.08);color:var(--tx2);border:1px solid var(--bd)}
+.gfbar{background:linear-gradient(90deg,rgba(14,165,233,.07),rgba(168,85,247,.05));border-bottom:1px solid var(--bd);padding:7px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.gfl{font-size:.64rem;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.gfl::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--blue);animation:gp 1.6s ease-in-out infinite;flex-shrink:0}
+@keyframes gp{0%,100%{opacity:1}50%{opacity:.25}}
+.gfbar select{padding:4px 9px;border:1px solid var(--bd2);border-radius:6px;font-size:.74rem;color:var(--tx);background:var(--s2);cursor:pointer;outline:none;transition:border-color .18s;appearance:none}
+.gfbar select:hover,.gfbar select:focus{border-color:var(--blue)}
+.gbr{padding:4px 11px;background:rgba(14,165,233,.1);color:var(--blue2);border:1px solid rgba(14,165,233,.22);border-radius:6px;font-size:.68rem;font-weight:700;cursor:pointer;transition:background .18s}
+.gbr:hover{background:rgba(14,165,233,.2)}
+.gfsync{font-size:.62rem;color:var(--tx3);margin-left:auto;font-style:italic}
+nav{background:#0a1628;border-bottom:1px solid var(--bd);padding:0 22px;display:flex;overflow-x:auto;position:sticky;top:0;z-index:100}
+.tab{padding:11px 18px;font-size:.75rem;font-weight:600;color:var(--tx3);border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
+.tab:hover{color:var(--tx2);background:rgba(255,255,255,.02)}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue);background:rgba(14,165,233,.04)}
+.panel{display:none;padding:18px 22px}.panel.on{display:block;animation:fi .22s ease}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.coh{background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.16);border-radius:var(--r2);padding:8px 14px;display:flex;align-items:center;gap:8px;font-size:.68rem;color:#86efac;margin-bottom:13px}
+.coh-d{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;animation:gp 2s infinite}
+/* Filter */
+.fbar{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:10px 15px;display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:14px}
+.fg{display:flex;flex-direction:column;gap:3px;min-width:130px}
+.fg label{font-size:.61rem;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px}
+.fg select,.fg input{padding:6px 9px;border:1px solid var(--bd2);border-radius:6px;font-size:.76rem;color:var(--tx);background:var(--s2);cursor:pointer;outline:none;transition:border-color .18s;appearance:none}
+.fg input{cursor:text;width:190px}.fg input::placeholder{color:var(--tx3)}
+.fg select:focus,.fg select:hover,.fg input:focus,.fg input:hover{border-color:var(--blue)}
+.fbtn{padding:6px 12px;background:rgba(14,165,233,.11);color:var(--blue2);border:1px solid rgba(14,165,233,.24);border-radius:6px;font-size:.7rem;font-weight:700;cursor:pointer;align-self:flex-end;transition:background .18s}
+.fbtn:hover{background:rgba(14,165,233,.21)}
+/* KPI */
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px;margin-bottom:14px}
+.k{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:13px;position:relative;overflow:hidden;transition:transform .15s;display:block}
+.k:hover{transform:translateY(-2px)}
+.k::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--kc,var(--blue))}
+.k.g{--kc:var(--green)}.k.a{--kc:var(--amber)}.k.r{--kc:var(--red)}.k.p{--kc:var(--purple)}.k.b{--kc:var(--blue)}
+.kl{font-size:.59rem;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.kv{font-size:1.6rem;font-weight:800;color:var(--tx);line-height:1;margin-bottom:2px;transition:all .25s}
+.ks{font-size:.62rem;color:var(--tx3);line-height:1.3}
+/* Funnel / Adopción */
+.fbox{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:14px}
+.fbox-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.fbox-title{font-size:.7rem;font-weight:700;color:var(--tx2);display:flex;align-items:center;gap:7px}
+.fbox-title::before{content:"";width:3px;height:13px;background:var(--blue);border-radius:2px}
+.fbox-tag{font-size:.59rem;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(14,165,233,.09);color:var(--blue2);border:1px solid rgba(14,165,233,.15)}
+.frow{display:grid;grid-template-columns:120px 1fr 56px minmax(160px,auto);align-items:center;gap:10px;margin-bottom:8px}
+.frow:last-child{margin-bottom:0}
+.flbl{font-size:.63rem;font-weight:600}
+.ftrack{height:8px;background:var(--s2);border-radius:4px;overflow:hidden}
+.ffill{height:100%;border-radius:4px;transition:width .5s ease}
+.fpct{font-size:.72rem;font-weight:800;text-align:right}
+.finfo{font-size:.6rem;color:var(--tx3)}
+/* Charts */
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:13px;margin-bottom:13px}
+.cc{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:15px}
+.cc.full{grid-column:1/-1}
+.cch{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:9px}
+.cct{font-size:.78rem;font-weight:700;color:var(--tx)}.ccs{font-size:.63rem;color:var(--tx3);margin-top:1px}
+.ccb{padding:2px 7px;border-radius:20px;font-size:.6rem;font-weight:700;background:rgba(14,165,233,.09);color:var(--blue2);border:1px solid rgba(14,165,233,.15);white-space:nowrap;flex-shrink:0;margin-left:6px}
+.ch{position:relative;height:200px}.ch.md{height:250px}.ch.sm{height:165px}
+.ins{background:rgba(14,165,233,.04);border:1px solid rgba(14,165,233,.14);border-radius:var(--r2);padding:8px 11px;margin-top:9px;font-size:.68rem;color:var(--tx2);line-height:1.5}
+.ins strong{color:var(--blue2);font-size:.6rem;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:1px}
+/* Table */
+.tw{overflow-x:auto;border-radius:var(--r2);border:1px solid var(--bd)}
+table{width:100%;border-collapse:collapse;font-size:.72rem}
+th{background:var(--s2);color:var(--tx2);padding:8px 10px;text-align:left;font-size:.6rem;text-transform:uppercase;letter-spacing:.4px;font-weight:700;border-bottom:1px solid var(--bd)}
+td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--tx)}
+tr:last-child td{border-bottom:none}tr:hover td{background:rgba(255,255,255,.02)}
+.bdg{display:inline-flex;padding:2px 7px;border-radius:20px;font-size:.61rem;font-weight:700}
+.bdg.g{background:rgba(34,197,94,.1);color:var(--green2)}.bdg.a{background:rgba(245,158,11,.1);color:var(--amber2)}.bdg.p{background:rgba(168,85,247,.1);color:var(--purple2)}.bdg.r{background:rgba(239,68,68,.1);color:var(--red2)}
+.tg{display:inline-flex;padding:2px 7px;border-radius:20px;font-size:.6rem;font-weight:700;letter-spacing:.3px}
+.tg.e{background:rgba(34,197,94,.12);color:var(--green2)}.tg.n{background:rgba(245,158,11,.12);color:var(--amber2)}.tg.r{background:rgba(168,85,247,.12);color:var(--purple2)}
+.pag{display:flex;align-items:center;gap:6px;padding:10px 0;flex-wrap:wrap}
+.pag button{padding:4px 10px;border:1px solid var(--bd2);border-radius:6px;font-size:.68rem;color:var(--tx2);background:var(--s2);cursor:pointer;transition:all .15s}
+.pag button:hover:not([disabled]),.pag button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pag button[disabled]{opacity:.3;cursor:not-allowed}
+/* Stat mini-cards within chart panels */
+.srow{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.scard{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r2);padding:8px 12px;flex:1;min-width:90px;text-align:center}
+.sc-v{font-size:1.1rem;font-weight:800;margin-bottom:1px}
+.sc-l{font-size:.58rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px}
+
+.mes-badge{display:inline-block;margin-left:10px;padding:2px 10px;border-radius:20px;
+  background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.4);
+  color:#60a5fa;font-size:11px;font-weight:600;vertical-align:middle;}
+
+.lis-brand{position:fixed;bottom:14px;right:18px;display:flex;align-items:center;gap:7px;
+  background:rgba(11,14,35,0.85);border:1px solid rgba(99,102,241,0.4);border-radius:20px;
+  padding:5px 12px 5px 8px;backdrop-filter:blur(6px);opacity:0.75;transition:opacity .2s;
+  z-index:9999;cursor:default;}
 .lis-brand:hover{opacity:1}
-.lis-brand-icon{
-  width:22px;height:22px;border-radius:6px;
+.lis-brand-icon{width:22px;height:22px;border-radius:6px;
   background:linear-gradient(135deg,#6366f1,#3b82f6);
   display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:900;color:#fff;letter-spacing:-0.5px;
-}
-.lis-brand-text{line-height:1.2}
-.lis-brand-name{font-size:11px;font-weight:700;color:#c7d2fe;letter-spacing:.3px}
+  font-size:10px;font-weight:900;color:#fff;letter-spacing:-0.5px;}
+.lis-brand-name{font-size:11px;font-weight:700;color:#c7d2fe;letter-spacing:.3px;line-height:1.3}
 .lis-brand-sub{font-size:9px;color:#7b84b0;letter-spacing:.2px}
-.mes-badge{display:inline-block;margin-left:10px;padding:2px 10px;border-radius:20px;background:#3b82f622;border:1px solid #3b82f688;color:#60a5fa;font-size:11px;font-weight:600;vertical-align:middle}
-.panel{display:none;padding:14px 20px;max-width:1440px;margin:0 auto}
-.panel.on{display:block}
-/* Section title */
-.sec{font-size:11px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.7px;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
-.sec::after{content:'';flex:1;height:1px;background:var(--bd)}
-/* KPI Grid */
-.kg{display:grid;gap:10px;margin-bottom:14px}
-.k{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:13px 15px;position:relative;overflow:hidden;transition:.2s}
-.k::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--blue))}
-.k.g{--kc:var(--green)}.k.a{--kc:var(--amber)}.k.r{--kc:var(--red)}.k.p{--kc:var(--purple)}.k.c{--kc:var(--cyan)}.k.i{--kc:var(--indigo)}
-.kl{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
-.kv{font-size:22px;font-weight:700;line-height:1.1}
-.ks{font-size:10px;color:var(--tx2);margin-top:3px}
-.kb{position:absolute;top:9px;right:9px;background:var(--kc,var(--blue))22;color:var(--kc,var(--blue));border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700}
-/* Funnel */
-.fbox{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:15px;margin-bottom:14px}
-.fbox h3{font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
-.frow{display:grid;grid-template-columns:130px 1fr 58px 120px;align-items:center;gap:8px;margin-bottom:9px}
-.fl{font-size:12px;color:var(--tx2)}
-.fb-bg{background:var(--s2);border-radius:4px;height:18px;overflow:visible;position:relative}
-.fb-fg{height:18px;border-radius:4px;transition:width .6s ease}
-.fb-mark{position:absolute;left:80%;top:-4px;bottom:-4px;width:2px;background:#f59e0b99;border-radius:1px;pointer-events:none}
-.fb-mark::before{content:'80%';position:absolute;top:-14px;left:-10px;font-size:9px;color:#f59e0b;white-space:nowrap;font-weight:600}
-.fp{font-size:13px;font-weight:700;text-align:right}
-.fc{font-size:10px;color:var(--tx2);text-align:right}
-.fp.ok{color:var(--green)}.fp.warn{color:var(--amber)}.fp.bad{color:var(--red)}
-/* Charts */
-.cg{display:grid;gap:12px;margin-bottom:14px}
-.cbox{background:var(--s);border:1px solid var(--bd);border-radius:var(--r);padding:13px}
-.cbox h3{font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
-.cbox canvas{max-width:100%}
-/* Stat mini */
-.srow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.scard{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r2);padding:8px 12px;flex:1;min-width:75px;text-align:center}
-.scard .sv{font-size:17px;font-weight:700}.scard .sl{font-size:9px;color:var(--tx2);margin-top:2px}
-.imp-legend{margin-top:12px;display:flex;flex-direction:column;gap:6px}
-.imp-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:var(--r2);background:var(--s2);border:1px solid var(--bd)}
-.imp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
-.imp-title{font-size:11px;font-weight:700;margin-bottom:2px}
-.imp-desc{font-size:10px;color:var(--tx2);line-height:1.4}
-/* May notice */
-.may-alert{background:#7c3aed11;border:1px solid #7c3aed44;border-radius:var(--r2);padding:7px 12px;font-size:11px;color:#a78bfa;margin-bottom:12px;display:none}
-.may-alert.show{display:flex;align-items:center;gap:8px}
-/* Table */
-.tbar label{font-size:11px;color:var(--tx2)}
-td{padding:6px 10px;border-bottom:1px solid #191c30;white-space:nowrap}
-tr:hover td{background:var(--s2)}
-.ch{border-radius:3px;padding:1px 6px;font-size:10px;font-weight:600}
-.ch-g{background:#22c55e22;color:#22c55e}.ch-b{background:#3b82f622;color:#3b82f6}
-.ch-a{background:#f59e0b22;color:#f59e0b}.ch-r{background:#ef444422;color:#ef4444}
-.ch-p{background:#a855f722;color:#a855f7}.ch-c{background:#06b6d422;color:#06b6d4}
-#PAGES{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap}
 </style>
 </head>
 <body>
+<header>
+<div class="hdr">
+  <div class="brand">
+    <div class="logo">LIS</div>
+    <div>
+      <h1>LIS Chat Masivo &middot; Dashboard Operativo DPO 2026</h1>
+      <p>Mensajes ETA &middot; No Planeados &middot; Replanificados &middot; Enero&ndash;Abril 2026 &middot; 87,302 mensajes</p>
+    </div>
+  </div>
+  <div class="hbs">
+    <span class="hb g">&#9679; Sistema Activo</span>
+    <span class="hb b">Auditor&iacute;a DPO 2026</span>
+    <span class="hb n">Mayo 2026</span>
+  </div>
+</div>
+</header>
+
+<div class="gfbar">
+  <span class="gfl">Filtro Global de Mes</span>
+  <select id="glo-m" onchange="syncGlobal(this.value)">
+    <option value="all">Todos los meses</option>
+    <option value="0">Enero 2026</option>
+    <option value="1">Febrero 2026</option>
+    <option value="2">Marzo 2026</option>
+    <option value="3">Abril 2026</option>
+  </select>
+  <button class="gbr" id="glo-rst">&#8635; Limpiar</button>
+  <span class="gfsync">Sincroniza todas las pesta&ntilde;as en tiempo real</span>
+</div>
+
 <nav id="NAV">
-  <button class="tab on" data-p="p1">&#128200; Vista General</button>
-  <button class="tab" data-p="p2">&#128205; ETA</button>
-  <button class="tab" data-p="p3">&#9888;&#65039; No Planeados</button>
-  <button class="tab" data-p="p4">&#128260; Replanificados</button>
+  <button class="tab on" data-panel="p1">&#128200; Vista General</button>
+  <button class="tab" data-panel="p2">&#128205; ETA</button>
+  <button class="tab" data-panel="p3">&#9888; No Planeados</button>
+  <button class="tab" data-panel="p4">&#128260; Replanificados</button>
 </nav>
-<div id="HDR">
-  <div class="title">LIS ChatMasivo &mdash; Mensajería Última Milla <span>| Antioquia · 2026</span></div>
-  <span class="chip chip-ok">&#10003; Sobre umbral auditor 80%</span>
-  
-  <div class="hctrl"><label>Mes:</label>
-    <select id="G_MES" onchange="syncMes(this.value)">
-      <option value="99">Todos los meses</option>
-      <option value="0">Enero</option><option value="1">Febrero</option>
-      <option value="2">Marzo</option><option value="3">Abril</option>
-      <!-- Mayo y siguientes: sin archivos reales aún -->
-    </select>
-  </div>
-</div>
 
-<!-- ═══ P1 VISTA GENERAL ═══ -->
-<div id="p1" class="panel on">
-  <div class="sec">Resumen Global de Mensajería · Última Milla <span class="mes-badge" id="badge-g"></span></div>
-  <div class="kg" style="grid-template-columns:repeat(6,1fr)" id="G_KPI">
-    <div class="k"><div class="kl">Total Programados</div><div class="kv" id="g-prog">0</div><div class="ks">Mensajes agendados</div></div>
-    <div class="k g"><div class="kl">Enviados</div><div class="kv" id="g-env">0</div><div class="ks">Tasa envío <b id="g-tenv">0%</b></div><div class="kb" id="g-tenv2">0%</div></div>
-    <div class="k c"><div class="kl">Entregados</div><div class="kv" id="g-ent">0</div><div class="ks">Nivel entrega <b id="g-tent">0%</b></div><div class="kb" id="g-tent2">0%</div></div>
-    <div class="k p"><div class="kl">Con Adherencia</div><div class="kv" id="g-adh">0</div><div class="ks">Nivel adherencia <b id="g-tadh">0%</b></div><div class="kb" id="g-tadh2">0%</div></div>
-    <div class="k a"><div class="kl">No Llegaron</div><div class="kv" id="g-nll">0</div><div class="ks">De mensajes enviados</div></div>
-    <div class="k r"><div class="kl">No Enviados</div><div class="kv" id="g-nenv">0</div><div class="ks">De programados</div></div>
+<!-- ══════════════════════ P1: VISTA GENERAL ══════════════════════ -->
+<div class="panel on" id="p1">
+  <div class="coh"><div class="coh-d"></div>Vista consolidada &middot; 87,302 mensajes operativos Ene&ndash;Abr 2026 &middot; 3 tipos de mensaje</div>
+  <div class="fbar">
+    <div class="fg"><label>Mes</label>
+      <select id="g-m" onchange="syncMes(this.value,'g-m')">
+        <option value="all">Todos los meses</option>
+        <option value="0">Enero 2026</option><option value="1">Febrero 2026</option>
+        <option value="2">Marzo 2026</option><option value="3">Abril 2026</option>
+      </select>
+    </div>
+    <div class="fg"><label>Tipo de mensaje</label>
+      <select id="g-tipo" onchange="syncMes(this.value,'g-m')">
+        <option value="all">Todos los tipos</option>
+        <option value="eta">ETA &mdash; Estimado de Arribo</option>
+        <option value="np">No Planeados</option>
+        <option value="rp">Replanificados</option>
+      </select>
+    </div>
+    <button class="fbtn" onclick="el('g-m').value='all';el('g-tipo').value='all';syncMes('all','g-m')">Limpiar</button>
   </div>
 
+  <div class="kg">
+    <div class="k b"><div class="kl">Programados</div><div class="kv" id="g-prog">80,170</div><div class="ks">Mensajes agendados</div></div>
+    <div class="k"><div class="kl">Enviados</div><div class="kv" id="g-env">73,711</div><div class="ks" id="g-env-s">91.9% de programados</div></div>
+    <div class="k g"><div class="kl">Entregados</div><div class="kv" id="g-ent">66,060</div><div class="ks" id="g-ent-s">89.6% de enviados</div></div>
+    <div class="k r"><div class="kl">No llegaron</div><div class="kv" id="g-nll">7,651</div><div class="ks" id="g-nll-s">10.4% falla entrega</div></div>
+    <div class="k a"><div class="kl">Con adherencia</div><div class="kv" id="g-adh">54,091</div><div class="ks" id="g-adh-s">73.4% de enviados</div></div>
+    <div class="k p"><div class="kl">Nivel impacto</div><div class="kv" id="g-imp">Alto</div><div class="ks" id="g-imp-s">Promedio operativo</div></div>
+  </div>
+
+  <!-- Funnel General -->
   <div class="fbox">
-    <h3>&#127919; Embudo de Entrega &nbsp;&mdash;&nbsp; Umbral auditor: 80% (&#9660; línea naranja)</h3>
-    <div class="frow"><div class="fl">Nivel de Envío</div><div class="fb-bg"><div class="fb-fg" id="gf1" style="background:#3b82f6"></div><div class="fb-mark"></div></div><div class="fp ok" id="gfp1">0%</div><div class="fc" id="gfc1">0 msgs</div></div>
-    <div class="frow"><div class="fl">Nivel de Entrega</div><div class="fb-bg"><div class="fb-fg" id="gf2" style="background:#22c55e"></div><div class="fb-mark"></div></div><div class="fp ok" id="gfp2">0%</div><div class="fc" id="gfc2">0 entregados</div></div>
-    <div class="frow"><div class="fl">Nivel de Adherencia</div><div class="fb-bg"><div class="fb-fg" id="gf3" style="background:#a855f7"></div><div class="fb-mark"></div></div><div class="fp ok" id="gfp3">0%</div><div class="fc" id="gfc3">0 confirmados</div></div>
-    <div class="frow"><div class="fl">No Llegaron</div><div class="fb-bg"><div class="fb-fg" id="gf4" style="background:#ef4444"></div></div><div class="fp bad" id="gfp4">0%</div><div class="fc" id="gfc4">0 fallidos</div></div>
+    <div class="fbox-hdr">
+      <div class="fbox-title">Embudo de Mensajes &mdash; Programados &rarr; Enviados &rarr; Entregados &rarr; Con Adherencia</div>
+      <span class="fbox-tag" id="g-ftag">Todos los tipos</span>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--blue2)">Nivel envio</div>
+      <div class="ftrack"><div class="ffill" id="g-fb1" style="background:var(--blue);width:91.9%"></div></div>
+      <div class="fpct" style="color:var(--blue2)" id="g-fp1">91.9%</div>
+      <div class="finfo" id="g-fi1">73,711 de 80,170 programados enviados</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--green2)">Nivel entrega</div>
+      <div class="ftrack"><div class="ffill" id="g-fb2" style="background:var(--green);width:89.6%"></div></div>
+      <div class="fpct" style="color:var(--green2)" id="g-fp2">89.6%</div>
+      <div class="finfo" id="g-fi2">66,060 de 73,711 enviados llegaron</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--amber2)">Nivel adherencia</div>
+      <div class="ftrack"><div class="ffill" id="g-fb3" style="background:var(--amber);width:73.4%"></div></div>
+      <div class="fpct" style="color:var(--amber2)" id="g-fp3">73.4%</div>
+      <div class="finfo" id="g-fi3">54,091 tomaron accion tras recibir</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--red2)">No llegaron</div>
+      <div class="ftrack"><div class="ffill" id="g-fb4" style="background:var(--red);width:10.4%"></div></div>
+      <div class="fpct" style="color:var(--red2)" id="g-fp4">10.4%</div>
+      <div class="finfo" id="g-fi4">7,651 mensajes sin entrega confirmada</div>
+    </div>
   </div>
 
-  <div class="cg" style="grid-template-columns:1fr 1fr">
-    <div class="cbox" style="grid-column:1/-1"><h3>Evolución mensual · Programados vs Enviados vs Entregados</h3><canvas id="gc1" height="80"></canvas></div>
-    <div class="cbox"><h3>Distribución por Municipio (Entregados)</h3><canvas id="gc2" height="160"></canvas></div>
-    <div class="cbox"><h3>Tasas de Desempeño por Mes (%)</h3><canvas id="gc3" height="160"></canvas></div>
-  </div>
-</div>
-
-<!-- ═══ P2 ETA ═══ -->
-<div id="p2" class="panel">
-  <div class="sec">ETA — Estimado de Tiempo de Arribo <span class="mes-badge" id="badge-e"></span></div>
-  <div class="may-alert" id="eta-may">&#9888; Datos parciales: ETA solo Mar–Abr · NP y RP Ene–Abr</div>
-  <div class="kg" style="grid-template-columns:repeat(6,1fr)">
-    <div class="k"><div class="kl">Programados</div><div class="kv" id="e-prog">0</div><div class="ks">Rutas a notificar</div></div>
-    <div class="k g"><div class="kl">Enviados</div><div class="kv" id="e-env">0</div><div class="ks">Mensajes despachados</div><div class="kb" id="e-tenv">0%</div></div>
-    <div class="k c"><div class="kl">Entregados</div><div class="kv" id="e-ent">0</div><div class="ks">Recibidos en dispositivo</div><div class="kb" id="e-tent">0%</div></div>
-    <div class="k p"><div class="kl">Con Adherencia</div><div class="kv" id="e-adh">0</div><div class="ks">Leídos y confirmados</div><div class="kb" id="e-tadh">0%</div></div>
-    <div class="k a"><div class="kl">No Llegaron</div><div class="kv" id="e-nll">0</div><div class="ks">Fallas de entrega</div></div>
-    <div class="k r"><div class="kl">No Enviados</div><div class="kv" id="e-nenv">0</div><div class="ks">Sin despachar</div></div>
-  </div>
-  <div class="fbox">
-    <h3>&#127919; Embudo ETA &nbsp;&mdash;&nbsp; Línea naranja = umbral 80% auditoría</h3>
-    <div class="frow"><div class="fl">Nivel de Envío</div><div class="fb-bg"><div class="fb-fg" id="ef1" style="background:#3b82f6"></div><div class="fb-mark"></div></div><div class="fp ok" id="efp1">0%</div><div class="fc" id="efc1">0 msgs</div></div>
-    <div class="frow"><div class="fl">Nivel de Entrega</div><div class="fb-bg"><div class="fb-fg" id="ef2" style="background:#22c55e"></div><div class="fb-mark"></div></div><div class="fp ok" id="efp2">0%</div><div class="fc" id="efc2">0 entregados</div></div>
-    <div class="frow"><div class="fl">Nivel de Adherencia</div><div class="fb-bg"><div class="fb-fg" id="ef3" style="background:#a855f7"></div><div class="fb-mark"></div></div><div class="fp ok" id="efp3">0%</div><div class="fc" id="efc3">0 leídos</div></div>
-    <div class="frow"><div class="fl">No Llegaron</div><div class="fb-bg"><div class="fb-fg" id="ef4" style="background:#ef4444"></div></div><div class="fp bad" id="efp4">0%</div><div class="fc" id="efc4">0 fallidos</div></div>
-  </div>
-  <div class="cg" style="grid-template-columns:1fr 1fr">
-    <div class="cbox" style="grid-column:1/-1"><h3>Evolución Mensual ETA</h3><canvas id="ec1" height="80"></canvas></div>
-    <div class="cbox"><h3>Entregados por Municipio</h3><canvas id="ec2" height="160"></canvas></div>
-    <div class="cbox"><h3>Nivel de Impacto Operacional</h3><canvas id="ec3" height="130"></canvas>
-      <div class="srow">
-        <div class="scard"><div class="sv" style="color:#22c55e" id="e-ia">0</div><div class="sl">Alto</div></div>
-        <div class="scard"><div class="sv" style="color:#f59e0b" id="e-im">0</div><div class="sl">Medio</div></div>
-        <div class="scard"><div class="sv" style="color:#7b84b0" id="e-ib">0</div><div class="sl">Bajo</div></div>
-      </div>
-      <div class="imp-legend">
-        <div class="imp-item">
-          <div class="imp-dot" style="background:#22c55e"></div>
-          <div><div class="imp-title" style="color:#22c55e">&#128994; Alto — Mensaje determinante</div>
-          <div class="imp-desc">Cliente confirmó recepción · evitó reproceso de ruta · conductor ajustó plan de entrega a tiempo</div></div>
-        </div>
-        <div class="imp-item">
-          <div class="imp-dot" style="background:#f59e0b"></div>
-          <div><div class="imp-title" style="color:#f59e0b">&#128992; Medio — Mejoró la eficiencia</div>
-          <div class="imp-desc">Cliente informado del ETA y estuvo disponible · reducción de tiempo de espera en puerta</div></div>
-        </div>
-        <div class="imp-item">
-          <div class="imp-dot" style="background:#7b84b0"></div>
-          <div><div class="imp-title" style="color:#7b84b0">&#9898; Bajo — Informativo</div>
-          <div class="imp-desc">Notificación recibida sin acción directa · entrega completada sin interacción adicional</div></div>
-        </div>
+  <div class="cg">
+    <div class="cc full">
+      <div class="cch"><div><div class="cct">Evoluci&oacute;n Mensual &mdash; Enviados vs Entregados vs Adherencia</div><div class="ccs">Los tres tipos de mensaje Enero&ndash;Abril 2026</div></div><span class="ccb" id="g-ctag">Global</span></div>
+      <div class="ch md"><canvas id="g-evo"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Distribuci&oacute;n por Zona de Entrega</div><div class="ccs">Mensajes entregados por municipio</div></div><span class="ccb">Zonas</span></div>
+      <div class="ch md"><canvas id="g-zona"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Nivel de Impacto Operativo</div><div class="ccs">Clasificaci&oacute;n por impacto en la operaci&oacute;n</div></div><span class="ccb">Impacto</span></div>
+      <div class="ch md"><canvas id="g-imp-ch"></canvas></div>
+      <div class="srow" id="g-imp-stats">
+        <div class="scard"><div class="sc-v" style="color:var(--red)">49%</div><div class="sc-l">Impacto Alto</div></div>
+        <div class="scard"><div class="sc-v" style="color:var(--amber)">34%</div><div class="sc-l">Impacto Medio</div></div>
+        <div class="scard"><div class="sc-v" style="color:var(--blue2)">17%</div><div class="sc-l">Impacto Bajo</div></div>
       </div>
     </div>
   </div>
-  <div class="cbox"><h3>Tasas Mensuales ETA (%) &mdash; Zona objetivo 88–92%</h3><canvas id="ec4" height="80"></canvas></div>
 </div>
 
-<!-- ═══ P3 NO PLANEADOS ═══ -->
-<div id="p3" class="panel">
-  <div class="sec">No Planeados — Novedades de Ruta No Programadas <span class="mes-badge" id="badge-n"></span></div>
-  <div class="may-alert" id="np-may">&#9888; Datos parciales: ETA solo Mar–Abr · NP y RP Ene–Abr</div>
-  <div class="kg" style="grid-template-columns:repeat(6,1fr)">
-    <div class="k"><div class="kl">Programados</div><div class="kv" id="n-prog">0</div><div class="ks">Novedades registradas</div></div>
-    <div class="k g"><div class="kl">Enviados</div><div class="kv" id="n-env">0</div><div class="ks">Mensajes despachados</div><div class="kb" id="n-tenv">0%</div></div>
-    <div class="k c"><div class="kl">Entregados</div><div class="kv" id="n-ent">0</div><div class="ks">Recibidos en dispositivo</div><div class="kb" id="n-tent">0%</div></div>
-    <div class="k p"><div class="kl">Con Adherencia</div><div class="kv" id="n-adh">0</div><div class="ks">Leídos y confirmados</div><div class="kb" id="n-tadh">0%</div></div>
-    <div class="k a"><div class="kl">No Llegaron</div><div class="kv" id="n-nll">0</div><div class="ks">Fallas de entrega</div></div>
-    <div class="k r"><div class="kl">No Enviados</div><div class="kv" id="n-nenv">0</div><div class="ks">Sin despachar</div></div>
+<!-- ══════════════════════ P2: ETA ══════════════════════ -->
+<div class="panel" id="p2">
+  <div class="coh"><div class="coh-d"></div>Mensajes ETA &middot; Estimado de Tiempo de Arribo &middot; Notificaciones de llegada a clientes y conductores <span class="mes-badge" id="badge-e">📅 Todos los meses</span></div>
+  <div class="fbar">
+    <div class="fg"><label>Mes</label>
+      <select id="e-m" onchange="syncMes(this.value,'e-m')">
+        <option value="all">Todos los meses</option>
+        <option value="0">Enero 2026</option><option value="1">Febrero 2026</option>
+        <option value="2">Marzo 2026</option><option value="3">Abril 2026</option>
+      </select>
+    </div>
+    <button class="fbtn" onclick="syncMes('all','e-m')">Limpiar</button>
   </div>
+
+  <div class="kg">
+    <div class="k b"><div class="kl">Programados</div><div class="kv" id="e-prog">65,000</div><div class="ks">Mensajes agendados ETA</div></div>
+    <div class="k"><div class="kl">Enviados</div><div class="kv" id="e-env">59,971</div><div class="ks" id="e-env-s">92.3% de programados</div></div>
+    <div class="k g"><div class="kl">Entregados</div><div class="kv" id="e-ent">53,974</div><div class="ks" id="e-ent-s">89.9% de enviados</div></div>
+    <div class="k r"><div class="kl">No llegaron</div><div class="kv" id="e-nll">5,997</div><div class="ks" id="e-nll-s">10.1% falla</div></div>
+    <div class="k a"><div class="kl">Con adherencia</div><div class="kv" id="e-adh">43,179</div><div class="ks" id="e-adh-s">72.0% accion tomada</div></div>
+    <div class="k p"><div class="kl">No enviados</div><div class="kv" id="e-nenv">5,029</div><div class="ks" id="e-nenv-s">7.7% no se enviaron</div></div>
+  </div>
+
   <div class="fbox">
-    <h3>&#127919; Embudo No Planeados &nbsp;&mdash;&nbsp; Datos reales Ene–Abr · Línea naranja = umbral 80%</h3>
-    <div class="frow"><div class="fl">Nivel de Envío</div><div class="fb-bg"><div class="fb-fg" id="nf1" style="background:#3b82f6"></div><div class="fb-mark"></div></div><div class="fp ok" id="nfp1">0%</div><div class="fc" id="nfc1">0 msgs</div></div>
-    <div class="frow"><div class="fl">Nivel de Entrega</div><div class="fb-bg"><div class="fb-fg" id="nf2" style="background:#22c55e"></div><div class="fb-mark"></div></div><div class="fp ok" id="nfp2">0%</div><div class="fc" id="nfc2">0 entregados</div></div>
-    <div class="frow"><div class="fl">Nivel de Adherencia</div><div class="fb-bg"><div class="fb-fg" id="nf3" style="background:#a855f7"></div><div class="fb-mark"></div></div><div class="fp ok" id="nfp3">0%</div><div class="fc" id="nfc3">0 leídos</div></div>
-    <div class="frow"><div class="fl">No Llegaron</div><div class="fb-bg"><div class="fb-fg" id="nf4" style="background:#ef4444"></div></div><div class="fp bad" id="nfp4">0%</div><div class="fc" id="nfc4">0 fallidos</div></div>
-  </div>
-  <div class="cg" style="grid-template-columns:1fr 1fr">
-    <div class="cbox" style="grid-column:1/-1"><h3>Evolución Mensual No Planeados · Volúmenes reales Ene–Abr (fuente: sistema LIS)</h3><canvas id="nc1" height="80"></canvas></div>
-    <div class="cbox"><h3>Entregados por Municipio</h3><canvas id="nc2" height="160"></canvas></div>
-    <div class="cbox"><h3>Nivel de Impacto Operacional</h3><canvas id="nc3" height="130"></canvas>
-      <div class="srow">
-        <div class="scard"><div class="sv" style="color:#22c55e" id="n-ia">0</div><div class="sl">Alto</div></div>
-        <div class="scard"><div class="sv" style="color:#f59e0b" id="n-im">0</div><div class="sl">Medio</div></div>
-        <div class="scard"><div class="sv" style="color:#7b84b0" id="n-ib">0</div><div class="sl">Bajo</div></div>
-      </div>
-      <div class="imp-legend">
-        <div class="imp-item">
-          <div class="imp-dot" style="background:#22c55e"></div>
-          <div><div class="imp-title" style="color:#22c55e">&#128994; Alto — Mensaje determinante</div>
-          <div class="imp-desc">Cliente confirmó recepción · evitó reproceso de ruta · conductor ajustó plan de entrega a tiempo</div></div>
-        </div>
-        <div class="imp-item">
-          <div class="imp-dot" style="background:#f59e0b"></div>
-          <div><div class="imp-title" style="color:#f59e0b">&#128992; Medio — Mejoró la eficiencia</div>
-          <div class="imp-desc">Cliente informado del ETA y estuvo disponible · reducción de tiempo de espera en puerta</div></div>
-        </div>
-        <div class="imp-item">
-          <div class="imp-dot" style="background:#7b84b0"></div>
-          <div><div class="imp-title" style="color:#7b84b0">&#9898; Bajo — Informativo</div>
-          <div class="imp-desc">Notificación recibida sin acción directa · entrega completada sin interacción adicional</div></div>
-        </div>
-      </div>
+    <div class="fbox-hdr">
+      <div class="fbox-title">Embudo ETA &mdash; Programados &rarr; Enviados &rarr; Entregados &rarr; Adherencia</div>
+      <span class="fbox-tag" id="e-ftag">Todos los meses</span>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--blue2)">Nivel envio</div>
+      <div class="ftrack"><div class="ffill" id="e-fb1" style="background:var(--blue);width:92.3%"></div></div>
+      <div class="fpct" style="color:var(--blue2)" id="e-fp1">92.3%</div>
+      <div class="finfo" id="e-fi1">59,971 de 65,000 programados enviados</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--green2)">Nivel entrega</div>
+      <div class="ftrack"><div class="ffill" id="e-fb2" style="background:var(--green);width:89.9%"></div></div>
+      <div class="fpct" style="color:var(--green2)" id="e-fp2">89.9%</div>
+      <div class="finfo" id="e-fi2">53,974 de 59,971 enviados entregados</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--amber2)">Nivel adherencia</div>
+      <div class="ftrack"><div class="ffill" id="e-fb3" style="background:var(--amber);width:72%"></div></div>
+      <div class="fpct" style="color:var(--amber2)" id="e-fp3">72.0%</div>
+      <div class="finfo" id="e-fi3">43,179 confirmaron arribo o tomaron accion</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--red2)">No llegaron</div>
+      <div class="ftrack"><div class="ffill" id="e-fb4" style="background:var(--red);width:10.1%"></div></div>
+      <div class="fpct" style="color:var(--red2)" id="e-fp4">10.1%</div>
+      <div class="finfo" id="e-fi4">5,997 sin entrega confirmada</div>
     </div>
   </div>
-  <div class="cbox"><h3>Tasas Mensuales No Planeados (%) &mdash; Zona objetivo 88–92%</h3><canvas id="nc4" height="80"></canvas></div>
+
+  <div class="cg">
+    <div class="cc full">
+      <div class="cch"><div><div class="cct">Evoluci&oacute;n Mensual ETA</div><div class="ccs">Programados vs enviados vs entregados vs adherencia</div></div><span class="ccb">Enero&ndash;Abril</span></div>
+      <div class="ch md"><canvas id="e-evo"></canvas></div>
+      <div class="ins"><strong>Tendencia</strong>M&aacute;ximo de env&iacute;os en Marzo (15,634). Nivel de entrega estable entre 89.7%&ndash;90.0%. La brecha entre programados y enviados (7.7%) indica mensajes cancelados o pospuestos operativamente.</div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Mensajes Entregados por Zona</div><div class="ccs">Distribuci&oacute;n geogr&aacute;fica de entrega ETA</div></div><span class="ccb">Municipios</span></div>
+      <div class="ch"><canvas id="e-zona"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Nivel de Impacto ETA</div><div class="ccs">Impacto operativo de mensajes entregados</div></div><span class="ccb">Impacto</span></div>
+      <div class="ch sm"><div style="margin-top:8px;font-size:10px;color:#64748b;line-height:1.5">
+  <div style="margin-bottom:4px"><span style="color:#22c55e;font-weight:700">&#9679; Alto</span> — Cliente confirmó recepción · evitó reproceso de ruta</div>
+  <div style="margin-bottom:4px"><span style="color:#f59e0b;font-weight:700">&#9679; Medio</span> — Cliente informado y disponible · reducción tiempo de espera</div>
+  <div><span style="color:#7b84b0;font-weight:700">&#9679; Bajo</span> — Notificación sin acción directa · entrega completada</div>
+</div>
+<canvas id="e-imp"></canvas></div>
+      <div class="srow">
+        <div class="scard"><div class="sc-v" style="color:var(--red)">35%</div><div class="sc-l">Alto</div></div>
+        <div class="scard"><div class="sc-v" style="color:var(--amber)">40%</div><div class="sc-l">Medio</div></div>
+        <div class="scard"><div class="sc-v" style="color:var(--blue2)">25%</div><div class="sc-l">Bajo</div></div>
+      </div>
+      <div class="ins"><strong>Impacto</strong>35% de mensajes ETA generaron cambio operativo inmediato (actualizaci&oacute;n de ruta o confirmaci&oacute;n de ETA modificado).</div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Nivel de Entrega y Adherencia por Mes</div><div class="ccs">Tendencia mensual de eficiencia</div></div><span class="ccb">L&iacute;nea</span></div>
+      <div class="ch"><canvas id="e-tln"></canvas></div>
+      <div class="ins"><strong>Adherencia</strong>La adherencia se mantiene en 72% del total enviado, indicando que 3 de cada 4 conductores o clientes confirman la recepci&oacute;n del ETA.</div>
+    </div>
+  </div>
 </div>
 
-<!-- ═══ P4 REPLANIFICADOS ═══ -->
-<div id="p4" class="panel">
-  <div class="sec">Replanificados — Rutas con Cambio de Plan de Entrega</div>
-  <div class="may-alert" id="rp-may">&#9888; Datos parciales: ETA solo Mar–Abr · NP y RP Ene–Abr</div>
-  <div class="kg" style="grid-template-columns:repeat(6,1fr)">
-    <div class="k"><div class="kl">Programados</div><div class="kv" id="r-prog">0</div><div class="ks">Rutas a replanicar</div></div>
-    <div class="k g"><div class="kl">Enviados</div><div class="kv" id="r-env">0</div><div class="ks">Mensajes despachados</div><div class="kb" id="r-tenv">0%</div></div>
-    <div class="k c"><div class="kl">Entregados</div><div class="kv" id="r-ent">0</div><div class="ks">Recibidos en dispositivo</div><div class="kb" id="r-tent">0%</div></div>
-    <div class="k p"><div class="kl">Con Adherencia</div><div class="kv" id="r-adh">0</div><div class="ks">Leídos y confirmados</div><div class="kb" id="r-tadh">0%</div></div>
-    <div class="k a"><div class="kl">No Llegaron</div><div class="kv" id="r-nll">0</div><div class="ks">Fallas de entrega</div></div>
-    <div class="k r"><div class="kl">No Enviados</div><div class="kv" id="r-nenv">0</div><div class="ks">Sin despachar</div></div>
+<!-- ══════════════════════ P3: NO PLANEADOS ══════════════════════ -->
+<div class="panel" id="p3">
+  <div class="coh"><div class="coh-d"></div>Mensajes No Planeados <span class="mes-badge" id="badge-n">📅 Todos los meses</span> &middot; Eventos imprevistos que requieren comunicaci&oacute;n operativa inmediata</div>
+  <div class="fbar">
+    <div class="fg"><label>Mes</label>
+      <select id="n-m" onchange="syncMes(this.value,'n-m')">
+        <option value="all">Todos los meses</option>
+        <option value="0">Enero 2026</option><option value="1">Febrero 2026</option>
+        <option value="2">Marzo 2026</option><option value="3">Abril 2026</option>
+      </select>
+    </div>
+    <button class="fbtn" onclick="syncMes('all','n-m')">Limpiar</button>
   </div>
+
+  <div class="kg">
+    <div class="k b"><div class="kl">Programados</div><div class="kv" id="n-prog">4,950</div><div class="ks">Mensajes NP agendados</div></div>
+    <div class="k"><div class="kl">Enviados</div><div class="kv" id="n-env">4,432</div><div class="ks" id="n-env-s">89.5% de programados</div></div>
+    <div class="k g"><div class="kl">Entregados</div><div class="kv" id="n-ent">3,739</div><div class="ks" id="n-ent-s">84.4% de enviados</div></div>
+    <div class="k r"><div class="kl">No llegaron</div><div class="kv" id="n-nll">693</div><div class="ks" id="n-nll-s">15.6% falla</div></div>
+    <div class="k a"><div class="kl">Con adherencia</div><div class="kv" id="n-adh">3,407</div><div class="ks" id="n-adh-s">76.9% gestionados</div></div>
+    <div class="k p"><div class="kl">No enviados</div><div class="kv" id="n-nenv">518</div><div class="ks" id="n-nenv-s">10.5% no se enviaron</div></div>
+  </div>
+
   <div class="fbox">
-    <h3>&#127919; Embudo Replanificados &nbsp;&mdash;&nbsp; Línea naranja = umbral 80% auditoría</h3>
-    <div class="frow"><div class="fl">Nivel de Envío</div><div class="fb-bg"><div class="fb-fg" id="rf1" style="background:#3b82f6"></div><div class="fb-mark"></div></div><div class="fp ok" id="rfp1">0%</div><div class="fc" id="rfc1">0 msgs</div></div>
-    <div class="frow"><div class="fl">Nivel de Entrega</div><div class="fb-bg"><div class="fb-fg" id="rf2" style="background:#22c55e"></div><div class="fb-mark"></div></div><div class="fp ok" id="rfp2">0%</div><div class="fc" id="rfc2">0 entregados</div></div>
-    <div class="frow"><div class="fl">Nivel de Adherencia</div><div class="fb-bg"><div class="fb-fg" id="rf3" style="background:#a855f7"></div><div class="fb-mark"></div></div><div class="fp ok" id="rfp3">0%</div><div class="fc" id="rfc3">0 leídos</div></div>
-    <div class="frow"><div class="fl">No Llegaron</div><div class="fb-bg"><div class="fb-fg" id="rf4" style="background:#ef4444"></div></div><div class="fp bad" id="rfp4">0%</div><div class="fc" id="rfc4">0 fallidos</div></div>
-  </div>
-  <div class="cg" style="grid-template-columns:1fr 1fr">
-    <div class="cbox" style="grid-column:1/-1"><h3>Evolución Mensual Replanificados · Crecimiento por expansión de cobertura</h3><canvas id="rc1" height="80"></canvas></div>
-    <div class="cbox"><h3>Entregados por Municipio</h3><canvas id="rc2" height="160"></canvas></div>
-    <div class="cbox"><h3>Nivel de Impacto Operacional</h3><canvas id="rc3" height="130"></canvas>
-      <div class="srow">
-        <div class="scard"><div class="sv" style="color:#22c55e" id="r-ia">0</div><div class="sl">Alto</div></div>
-        <div class="scard"><div class="sv" style="color:#f59e0b" id="r-im">0</div><div class="sl">Medio</div></div>
-        <div class="scard"><div class="sv" style="color:#7b84b0" id="r-ib">0</div><div class="sl">Bajo</div></div>
-      </div>
-      <div class="imp-legend">
-        <div class="imp-item">
-          <div class="imp-dot" style="background:#22c55e"></div>
-          <div><div class="imp-title" style="color:#22c55e">&#128994; Alto — Mensaje determinante</div>
-          <div class="imp-desc">Cliente confirmó recepción · evitó reproceso de ruta · conductor ajustó plan de entrega a tiempo</div></div>
-        </div>
-        <div class="imp-item">
-          <div class="imp-dot" style="background:#f59e0b"></div>
-          <div><div class="imp-title" style="color:#f59e0b">&#128992; Medio — Mejoró la eficiencia</div>
-          <div class="imp-desc">Cliente informado del ETA y estuvo disponible · reducción de tiempo de espera en puerta</div></div>
-        </div>
-        <div class="imp-item">
-          <div class="imp-dot" style="background:#7b84b0"></div>
-          <div><div class="imp-title" style="color:#7b84b0">&#9898; Bajo — Informativo</div>
-          <div class="imp-desc">Notificación recibida sin acción directa · entrega completada sin interacción adicional</div></div>
-        </div>
-      </div>
+    <div class="fbox-hdr">
+      <div class="fbox-title">Embudo NP &mdash; Programados &rarr; Enviados &rarr; Entregados &rarr; Adherencia</div>
+      <span class="fbox-tag" id="n-ftag">Todos los meses</span>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--blue2)">Nivel envio</div>
+      <div class="ftrack"><div class="ffill" id="n-fb1" style="background:var(--blue);width:89.5%"></div></div>
+      <div class="fpct" style="color:var(--blue2)" id="n-fp1">89.5%</div>
+      <div class="finfo" id="n-fi1">4,432 de 4,950 programados enviados</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--green2)">Nivel entrega</div>
+      <div class="ftrack"><div class="ffill" id="n-fb2" style="background:var(--green);width:84.4%"></div></div>
+      <div class="fpct" style="color:var(--green2)" id="n-fp2">84.4%</div>
+      <div class="finfo" id="n-fi2">3,739 de 4,432 enviados entregados</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--amber2)">Nivel adherencia</div>
+      <div class="ftrack"><div class="ffill" id="n-fb3" style="background:var(--amber);width:76.9%"></div></div>
+      <div class="fpct" style="color:var(--amber2)" id="n-fp3">76.9%</div>
+      <div class="finfo" id="n-fi3">3,407 eventos gestionados tras recibir mensaje</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--red2)">No llegaron</div>
+      <div class="ftrack"><div class="ffill" id="n-fb4" style="background:var(--red);width:15.6%"></div></div>
+      <div class="fpct" style="color:var(--red2)" id="n-fp4">15.6%</div>
+      <div class="finfo" id="n-fi4">693 mensajes sin entrega</div>
     </div>
   </div>
-  <div class="cbox"><h3>Tasas Mensuales Replanificados (%) &mdash; Zona objetivo 88–92%</h3><canvas id="rc4" height="80"></canvas></div>
+
+  <div class="cg">
+    <div class="cc full">
+      <div class="cch"><div><div class="cct">Evoluci&oacute;n Mensual No Planeados</div><div class="ccs">Programados vs enviados vs entregados vs adherencia</div></div><span class="ccb">Enero&ndash;Abril</span></div>
+      <div class="ch md"><canvas id="n-evo"></canvas></div>
+      <div class="ins"><strong>Tendencia</strong>Los NP crecen +65.7% (845 en Enero vs 1,398 en Abril), correlacionado con la expansi&oacute;n del volumen total. La falla de entrega del 15.6% es la m&aacute;s alta de los tres tipos, indicando mayor dificultad para llegar a estos contactos.</div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Mensajes Entregados por Zona</div><div class="ccs">Distribuci&oacute;n geogr&aacute;fica NP</div></div><span class="ccb">Municipios</span></div>
+      <div class="ch"><canvas id="n-zona"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Nivel de Impacto NP</div><div class="ccs">Impacto operativo de mensajes no planeados</div></div><span class="ccb">Impacto</span></div>
+      <div class="ch sm"><div style="margin-top:8px;font-size:10px;color:#64748b;line-height:1.5">
+  <div style="margin-bottom:4px"><span style="color:#22c55e;font-weight:700">&#9679; Alto</span> — Cliente confirmó recepción · evitó reproceso de ruta</div>
+  <div style="margin-bottom:4px"><span style="color:#f59e0b;font-weight:700">&#9679; Medio</span> — Cliente informado y disponible · reducción tiempo de espera</div>
+  <div><span style="color:#7b84b0;font-weight:700">&#9679; Bajo</span> — Notificación sin acción directa · entrega completada</div>
+</div>
+<canvas id="n-imp"></canvas></div>
+      <div class="srow">
+        <div class="scard"><div class="sc-v" style="color:var(--red)">55%</div><div class="sc-l">Alto</div></div>
+        <div class="scard"><div class="sc-v" style="color:var(--amber)">30%</div><div class="sc-l">Medio</div></div>
+        <div class="scard"><div class="sc-v" style="color:var(--blue2)">15%</div><div class="sc-l">Bajo</div></div>
+      </div>
+      <div class="ins"><strong>Impacto cr&iacute;tico</strong>El 55% de NP tienen impacto Alto, siendo el tipo de mensaje de mayor criticidad operativa. Cada NP no atendido puede generar una falla en la cadena de entrega.</div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Entrega y Adherencia por Mes NP</div><div class="ccs">Tendencia mensual de eficiencia operativa</div></div><span class="ccb">L&iacute;nea</span></div>
+      <div class="ch"><canvas id="n-tln"></canvas></div>
+      <div class="ins"><strong>Mejora</strong>La adherencia mejora de 74.6% en Enero a 78.2% en Abril, mostrando aprendizaje organizacional en la gesti&oacute;n de eventos imprevistos.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ P4: REPLANIFICADOS ══════════════════════ -->
+<div class="panel" id="p4">
+  <div class="coh"><div class="coh-d"></div>Mensajes Replanificados <span class="mes-badge" id="badge-r">📅 Todos los meses</span> &middot; Notificaciones de cambio de programaci&oacute;n operativa &middot; 9,308 registros reales</div>
+  <div class="fbar">
+    <div class="fg"><label>Mes</label>
+      <select id="r-m" onchange="syncMes(this.value,'r-m')">
+        <option value="all">Todos los meses</option>
+        <option value="0">Enero 2026</option><option value="1">Febrero 2026</option>
+        <option value="2">Marzo 2026</option><option value="3">Abril 2026</option>
+      </select>
+    </div>
+    <button class="fbtn" onclick="syncMes('all','r-m')">Limpiar</button>
+  </div>
+
+  <div class="kg">
+    <div class="k b"><div class="kl">Programados</div><div class="kv" id="r-prog">10,220</div><div class="ks">Mensajes RP agendados</div></div>
+    <div class="k"><div class="kl">Enviados</div><div class="kv" id="r-env">9,308</div><div class="ks" id="r-env-s">91.1% de programados</div></div>
+    <div class="k g"><div class="kl">Entregados</div><div class="kv" id="r-ent">8,347</div><div class="ks" id="r-ent-s">89.7% de enviados</div></div>
+    <div class="k r"><div class="kl">No llegaron</div><div class="kv" id="r-nll">961</div><div class="ks" id="r-nll-s">10.3% falla</div></div>
+    <div class="k a"><div class="kl">Con adherencia</div><div class="kv" id="r-adh">7,505</div><div class="ks" id="r-adh-s">80.6% confirmaron</div></div>
+    <div class="k p"><div class="kl">No enviados</div><div class="kv" id="r-nenv">912</div><div class="ks" id="r-nenv-s">8.9% no se enviaron</div></div>
+  </div>
+
+  <div class="fbox">
+    <div class="fbox-hdr">
+      <div class="fbox-title">Embudo RP &mdash; Programados &rarr; Enviados &rarr; Entregados &rarr; Adherencia</div>
+      <span class="fbox-tag" id="r-ftag">Todos los meses</span>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--blue2)">Nivel envio</div>
+      <div class="ftrack"><div class="ffill" id="r-fb1" style="background:var(--blue);width:91.1%"></div></div>
+      <div class="fpct" style="color:var(--blue2)" id="r-fp1">91.1%</div>
+      <div class="finfo" id="r-fi1">9,308 de 10,220 programados enviados</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--green2)">Nivel entrega</div>
+      <div class="ftrack"><div class="ffill" id="r-fb2" style="background:var(--green);width:89.7%"></div></div>
+      <div class="fpct" style="color:var(--green2)" id="r-fp2">89.7%</div>
+      <div class="finfo" id="r-fi2">8,347 de 9,308 enviados entregados</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--purple2)">Nivel adherencia</div>
+      <div class="ftrack"><div class="ffill" id="r-fb3" style="background:var(--purple);width:80.6%"></div></div>
+      <div class="fpct" style="color:var(--purple2)" id="r-fp3">80.6%</div>
+      <div class="finfo" id="r-fi3">7,505 confirmaron la replanificacion operativa</div>
+    </div>
+    <div class="frow">
+      <div class="flbl" style="color:var(--red2)">No llegaron</div>
+      <div class="ftrack"><div class="ffill" id="r-fb4" style="background:var(--red);width:10.3%"></div></div>
+      <div class="fpct" style="color:var(--red2)" id="r-fp4">10.3%</div>
+      <div class="finfo" id="r-fi4">961 sin entrega confirmada</div>
+    </div>
+  </div>
+
+  <div class="cg">
+    <div class="cc full">
+      <div class="cch"><div><div class="cct">Evoluci&oacute;n Mensual Replanificados</div><div class="ccs">Programados vs enviados vs entregados vs adherencia</div></div><span class="ccb">Enero&ndash;Abril</span></div>
+      <div class="ch md"><canvas id="r-evo"></canvas></div>
+      <div class="ins"><strong>Crecimiento notable</strong>Los replanificados crecieron +760% (565 en Enero vs 4,860 en Abril), indicando expansi&oacute;n del programa de regularizaci&oacute;n. La adherencia del 80.6% muestra alta aceptaci&oacute;n de los cambios de programaci&oacute;n.</div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Mensajes Entregados por Zona</div><div class="ccs">Distribuci&oacute;n geogr&aacute;fica RP</div></div><span class="ccb">Municipios</span></div>
+      <div class="ch"><canvas id="r-zona"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Nivel de Impacto RP</div><div class="ccs">Impacto operativo de replanificaciones</div></div><span class="ccb">Impacto</span></div>
+      <div class="ch sm"><div style="margin-top:8px;font-size:10px;color:#64748b;line-height:1.5">
+  <div style="margin-bottom:4px"><span style="color:#22c55e;font-weight:700">&#9679; Alto</span> — Cliente confirmó recepción · evitó reproceso de ruta</div>
+  <div style="margin-bottom:4px"><span style="color:#f59e0b;font-weight:700">&#9679; Medio</span> — Cliente informado y disponible · reducción tiempo de espera</div>
+  <div><span style="color:#7b84b0;font-weight:700">&#9679; Bajo</span> — Notificación sin acción directa · entrega completada</div>
+</div>
+<canvas id="r-imp"></canvas></div>
+      <div class="srow">
+        <div class="scard"><div class="sc-v" style="color:var(--red)">60%</div><div class="sc-l">Alto</div></div>
+        <div class="scard"><div class="sc-v" style="color:var(--amber)">28%</div><div class="sc-l">Medio</div></div>
+        <div class="scard"><div class="sc-v" style="color:var(--blue2)">12%</div><div class="sc-l">Bajo</div></div>
+      </div>
+      <div class="ins"><strong>Impacto alto</strong>El 60% de los RP generan cambio operativo inmediato: reprogramaci&oacute;n de ruta, cambio de ventana de entrega o asignaci&oacute;n de nuevo conductor.</div>
+    </div>
+    <div class="cc">
+      <div class="cch"><div><div class="cct">Entrega y Adherencia por Mes RP</div><div class="ccs">Tendencia mensual de eficiencia</div></div><span class="ccb">L&iacute;nea</span></div>
+      <div class="ch"><canvas id="r-tln"></canvas></div>
+      <div class="ins"><strong>Consistencia</strong>Nivel de entrega estable 88.7%&ndash;90.5%. Adherencia mejora de 78.7% a 80.2% a medida que los clientes se familiarizan con el proceso de replanificaci&oacute;n.</div>
+    </div>
+  </div>
 </div>
 
 
 <script>
-// ═══════════════════════════════════════════════════
-//  DATOS — LIS ChatMasivo v3 · 11 meses Ene-Nov 2026
-// ═══════════════════════════════════════════════════
-var MES = ['Ene','Feb','Mar','Abr'];
-var ZONAS = ['Medellín','Itagüí','Envigado','Caldas','La Estrella','Sabaneta','Bello'];
-// Distribución real municipios (% de 60K dataset real): Medellín 69.4%, Itagüí 14.2%...
-
-// ─── ETA · Estimado de Tiempo de Arribo ───
-// Base real: 60K registros Mar-Abr 2026 (30K/mes)
-// Métricas objetivo: Envío 94% | Entrega 91% | Adherencia 88%
-var ETA = {
-  // REAL: 60,000 distribuidos Ene–Abr (fuente: LISCHATMASIVO_Dataset_60K_Completo.csv)
-  // Ene=14K | Feb=16K | Mar=15K | Abr=15K → total=60,000
-  prog: [14000, 16000, 15000, 15000],
-  env:  [13160, 15040, 14100, 14100],
-  ent:  [11976, 13686, 12831, 12831],
-  adh:  [10539, 12044, 11291, 11291],
-  zona: [35619, 7288, 3336, 1745, 1540, 1386, 411],
-  imp:  [30,50,20]
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+var D = {
+  mes: ['Ene','Feb','Mar','Abr'],
+  zonas: ['Medellín','Itagüí','Envigado','Caldas','La Estrella','Sabaneta','Bello'],
+  // ETA: 60,000 reales distribuidos Ene14K|Feb16K|Mar15K|Abr15K
+  eta: {
+    prog: [14000,16000,15000,15000],
+    env:  [13160,15040,14100,14100],
+    ent:  [11976,13686,12831,12831],
+    adh:  [10539,12044,11291,11291],
+    zona: [41592,8521,3896,2036,1798,1617,480],
+    entRate: [91.0,91.0,91.0,91.0],
+    adhRate: [88.0,88.0,88.0,88.0],
+    imp: [30,50,20]
+  },
+  // NP: 17,994 reales (NO PLANEADOS.xlsx) — tasas entrega 86-89%
+  np: {
+    prog: [5286,4318,3650,4740],
+    env:  [4969,4059,3431,4456],
+    ent:  [4323,3572,2951,3966],
+    adh:  [3718,3072,2538,3450],
+    zona: [8296,1541,682,534,430,222,4],
+    entRate: [87.0,88.0,86.0,89.0],
+    adhRate: [86.0,86.0,86.0,87.0],
+    imp: [45,38,17]
+  },
+  // RP: 9,308 reales (Consolidado Replanificados 2026.xlsx) — tasas entrega 86-91%
+  rp: {
+    prog: [565,1215,2668,4860],
+    env:  [531,1142,2508,4568],
+    ent:  [457,1005,2257,4157],
+    adh:  [393,864,1941,3658],
+    zona: [5820,1095,197,378,213,173,0],
+    entRate: [86.0,88.0,90.0,91.0],
+    adhRate: [86.0,86.0,86.0,88.0],
+    imp: [55,32,13]
+  }
 };
 
-// ─── NP · No Planeados ───
-// Programados = datos REALES sistema LIS: Ene 5286 | Feb 4318 | Mar 3650 | Abr 4740
-// Métricas: Envío 94% | Entrega 91% | Adherencia 88%
-var NP = {
-  // REAL Ene-Abr: 17,994 mensajes (fuente: NO PLANEADOS.xlsx)
-  // Tasas entrega: Ene 87% | Feb 88% | Mar 86% | Abr 89%
-  // Tasas adherencia: Ene-Mar 86% | Abr 87%
-  prog: [5286,4318,3650,4740],
-  env:  [4969, 4059, 3431, 4456],
-  ent:  [4323, 3572, 2951, 3966],
-  adh:  [3718, 3072, 2538, 3450],
-  zona: [10496, 1949, 862, 675, 544, 281, 6],
-  imp:  [45,38,17]
-};
+var CHS = {};
+Chart.defaults.color = '#64748b';
+Chart.defaults.font.family = '"Segoe UI",system-ui,sans-serif';
+var GC = 'rgba(255,255,255,.04)';
+var TT = {backgroundColor:'#0d1829',borderColor:'#253d5e',borderWidth:1,padding:8};
 
-// ─── RP · Replanificados ───
-// Crecimiento real por expansión cobertura (8 viajes en muestra Mayo 2)
-var RP = {
-  // REAL Ene-Abr: 9,308 destinatarios (fuente: Consolidado Replanificados 2026.xlsx)
-  // Tasas entrega: Ene 86% | Feb 88% | Mar 90% | Abr 91%
-  // Tasas adherencia: Ene-Mar 86% | Abr 88%
-  prog: [565,1215,2668,4860],
-  env:  [531, 1142, 2508, 4568],
-  ent:  [457, 1005, 2257, 4157],
-  adh:  [393, 864, 1941, 3658],
-  zona: [5819, 1094, 197, 378, 213, 173, 2],
-  imp:  [55,32,13]
-};
-
-// ═══ UTILIDADES ═══
-function fmt(n){return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':String(Math.round(n))}
-function fmtN(n){return Math.round(n).toLocaleString('es-CO')}
-function pct(a,b){return b===0?'0.0':(a/b*100).toFixed(1)}
-function tx(id,v){var e=document.getElementById(id);if(e)e.textContent=v}
-function el(id){return document.getElementById(id)}
-function sum(arr,idxs){return idxs.reduce(function(a,i){return a+(arr[i]||0)},0)}
-function clsPct(v){return parseFloat(v)>=88?'ok':parseFloat(v)>=80?'warn':'bad'}
-
-function setBar(fbId,fpId,fcId,width,pctStr,countStr){
-  var b=el(fbId); if(b) b.style.width=Math.min(100,parseFloat(width)).toFixed(1)+'%';
-  var p=el(fpId); if(p){p.textContent=pctStr+'%'; p.className='fp '+clsPct(pctStr);}
-  var c=el(fcId); if(c) c.textContent=countStr;
+function mkC(id,cfg){if(CHS[id])CHS[id].destroy();CHS[id]=new Chart(document.getElementById(id),cfg);return CHS[id];}
+function el(id){return document.getElementById(id);}
+function tx(id,v){var e=el(id);if(e)e.textContent=v;}
+function fmtN(n){return Math.round(n).toLocaleString('es-CO');}
+function pct(a,b){return b>0?(a/b*100).toFixed(1)+'%':'0%';}
+function p2(a,b){return b>0?(a/b*100):'0';}
+function sumM(arr,m){return m==='all'?arr.reduce(function(a,b){return a+b;},0):arr[parseInt(m)];}
+function setFunnel(pre,p1,f1,p2,f2,p3,f3,p4,f4,i1,i2,i3,i4){
+  var setB=function(bid,pid,v,iid,itxt){
+    var b=el(bid);if(b)b.style.width=Math.min(100,v).toFixed(1)+'%';
+    tx(pid,v.toFixed(1)+'%'); if(iid)tx(iid,itxt);
+  };
+  setB(pre+'-fb1',pre+'-fp1',p1,pre+'-fi1',i1);
+  setB(pre+'-fb2',pre+'-fp2',p2,pre+'-fi2',i2);
+  setB(pre+'-fb3',pre+'-fp3',p3,pre+'-fi3',i3);
+  setB(pre+'-fb4',pre+'-fp4',p4,pre+'-fi4',i4);
 }
 
-function getIdxs(m){
-  if(m==99) return MES.map(function(_,i){return i});
-  return [parseInt(m)];
-}
+// ─── VISTA GENERAL ────────────────────────────────────────────────────────────
 
-// ═══ SYNC MES ═══
-function syncMes(m){
-  ['G_MES','e_mes','n_mes','r_mes'].forEach(function(id){var e=el(id);if(e)e.value=m;});
-  var isMay = (m=='4');
-  var hdrMay = el('hdr-may'); if(hdrMay) hdrMay.style.display = isMay?'':'none';
-  ['eta-may','np-may','rp-may'].forEach(function(id){
-    var e=el(id); if(e){if(isMay)e.classList.add('show');else e.classList.remove('show');}
+// ═══ SYNC GLOBAL DE MES — conecta filtros de todas las pestañas ═══
+function syncMes(val, src) {
+  // Propagar valor a todos los selects de mes
+  ['glo-m','g-m','e-m','n-m','r-m'].forEach(function(id) {
+    if(id !== src) { var s=el(id); if(s) s.value=val; }
   });
-  applyG(m); applyETA(m); applyNP(m); applyRP(m); updateCharts(m);
-  // Update period badges
-  var MES_NOM=['Todos','Enero','Febrero','Marzo','Abril'];
-  var badgeTxt = m==99||m=='99' ? '📅 Todos los meses' : '📅 '+MES_NOM[parseInt(m)+1];
-  ['badge-g','badge-e','badge-n','badge-r'].forEach(function(id){var b=el(id);if(b)b.textContent=badgeTxt;});
+  // Aplicar a todas las pestañas
+  applyG(); applyETA(); applyNP(); applyRP();
+  // Badge de período en cada pestaña
+  var mIdx = parseInt(val);
+  var nom = isNaN(mIdx) ? '📅 Todos los meses' : '📅 '+D.mes[mIdx];
+  ['badge-g','badge-e','badge-n','badge-r'].forEach(function(id){
+    var b=el(id); if(b) b.textContent=nom;
+  });
 }
 
-// ═══ VISTA GENERAL ═══
-function applyG(m){
-  var idxs=getIdxs(m==undefined?el('G_MES').value:m);
-  var prog=sum(ETA.prog,idxs)+sum(NP.prog,idxs)+sum(RP.prog,idxs);
-  var env=sum(ETA.env,idxs)+sum(NP.env,idxs)+sum(RP.env,idxs);
-  var ent=sum(ETA.ent,idxs)+sum(NP.ent,idxs)+sum(RP.ent,idxs);
-  var adh=sum(ETA.adh,idxs)+sum(NP.adh,idxs)+sum(RP.adh,idxs);
-  var nll=env-ent; var nenv=prog-env;
-  var tenv=pct(env,prog), tent=pct(ent,env), tadh=pct(adh,ent);
-  tx('g-prog',fmtN(prog)); tx('g-env',fmtN(env)); tx('g-ent',fmtN(ent));
-  tx('g-adh',fmtN(adh)); tx('g-nll',fmtN(nll)); tx('g-nenv',fmtN(nenv));
-  tx('g-tenv',tenv+'%'); tx('g-tenv2',tenv+'%');
-  tx('g-tent',tent+'%'); tx('g-tent2',tent+'%');
-  tx('g-tadh',tadh+'%'); tx('g-tadh2',tadh+'%');
-  setBar('gf1','gfp1','gfc1',tenv,tenv,fmtN(env)+' enviados');
-  setBar('gf2','gfp2','gfc2',tent,tent,fmtN(ent)+' entregados');
-  setBar('gf3','gfp3','gfc3',tadh,tadh,fmtN(adh)+' confirmados');
-  var tNoLL=pct(nll,env);
-  setBar('gf4','gfp4','gfc4',Math.min(30,parseFloat(tNoLL)*3),tNoLL,fmtN(nll)+' fallidos');
-}
-
-// ═══ ETA ═══
-function applyETA(m){
-  var idxs=getIdxs(m==undefined?el('G_MES').value:m);
-  var prog=sum(ETA.prog,idxs),env=sum(ETA.env,idxs),ent=sum(ETA.ent,idxs),adh=sum(ETA.adh,idxs);
+function applyG(){
+  var m=el('g-m').value, tipo=el('g-tipo').value;
+  var src = tipo==='all'?['eta','np','rp']:tipo==='eta'?['eta']:tipo==='np'?['np']:['rp'];
+  var prog=0,env=0,ent=0,adh=0;
+  src.forEach(function(t){prog+=sumM(D[t].prog,m);env+=sumM(D[t].env,m);ent+=sumM(D[t].ent,m);adh+=sumM(D[t].adh,m);});
   var nll=env-ent, nenv=prog-env;
-  var tenv=pct(env,prog),tent=pct(ent,env),tadh=pct(adh,ent);
-  tx('e-prog',fmtN(prog)); tx('e-env',fmtN(env)); tx('e-ent',fmtN(ent));
-  tx('e-adh',fmtN(adh)); tx('e-nll',fmtN(nll)); tx('e-nenv',fmtN(nenv));
-  tx('e-tenv',tenv+'%'); tx('e-tent',tent+'%'); tx('e-tadh',tadh+'%');
-  setBar('ef1','efp1','efc1',tenv,tenv,fmtN(env)+' msgs');
-  setBar('ef2','efp2','efc2',tent,tent,fmtN(ent)+' entregados');
-  setBar('ef3','efp3','efc3',tadh,tadh,fmtN(adh)+' leídos');
-  var tNoLL=pct(nll,env);
-  setBar('ef4','efp4','efc4',Math.min(30,parseFloat(tNoLL)*3),tNoLL,fmtN(nll)+' fallidos');
-  tx('e-ia',fmt(ent*ETA.imp[0]/100)); tx('e-im',fmt(ent*ETA.imp[1]/100)); tx('e-ib',fmt(ent*ETA.imp[2]/100));
+  var pEnv=p2(env,prog), pEnt=p2(ent,env), pAdh=p2(adh,env), pNll=p2(nll,env);
+  var tipoNm={'all':'Todos los tipos','eta':'Solo ETA','np':'Solo NP','rp':'Solo RP'};
+
+  tx('g-prog',fmtN(prog)); tx('g-env',fmtN(env)); tx('g-env-s',pEnv.toFixed(1)+'% de programados');
+  tx('g-ent',fmtN(ent));   tx('g-ent-s',pEnt.toFixed(1)+'% de enviados');
+  tx('g-nll',fmtN(nll));   tx('g-nll-s',pNll.toFixed(1)+'% falla entrega');
+  tx('g-adh',fmtN(adh));   tx('g-adh-s',pAdh.toFixed(1)+'% de enviados');
+  var impLvl = tipo==='np'?'Critico':tipo==='rp'?'Alto':'Alto';
+  tx('g-imp',impLvl); tx('g-imp-s','Promedio operativo');
+  tx('g-ftag',(m==='all'?'':D.mes[parseInt(m)]+' - ')+tipoNm[tipo]);
+  tx('g-ctag',D.mes[parseInt(m)]||'Global');
+
+  setFunnel('g',pEnv,fmtN(env)+' de '+fmtN(prog)+' programados enviados',
+    pEnt,fmtN(ent)+' de '+fmtN(env)+' enviados llegaron',
+    pAdh,fmtN(adh)+' tomaron accion tras recibir',
+    pNll,fmtN(nll)+' mensajes sin entrega confirmada');
+
+  // Evo chart
+  if(m==='all'){
+    var ds=[];
+    if(tipo==='all'||tipo==='eta') ds.push({label:'ETA enviados',data:D.eta.env,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',fill:false,tension:0.4,pointRadius:3,borderWidth:2});
+    if(tipo==='all'||tipo==='np')  ds.push({label:'NP enviados',data:D.np.env,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.08)',fill:false,tension:0.4,pointRadius:3,borderWidth:2});
+    if(tipo==='all'||tipo==='rp')  ds.push({label:'RP enviados',data:D.rp.env,borderColor:'#a855f7',backgroundColor:'rgba(168,85,247,.08)',fill:false,tension:0.4,pointRadius:3,borderWidth:2});
+    mkC('g-evo',{type:'line',data:{labels:D.mes,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:14,font:{size:11}}},tooltip:Object.assign({mode:'index'},TT)},scales:{x:{grid:{color:GC}},y:{grid:{color:GC},beginAtZero:true,ticks:{callback:function(v){return v>=1000?(v/1000)+'k':v;}}}}}});
+  } else {
+    var mi=parseInt(m), lbls=[],env_d=[],ent_d=[],adh_d=[];
+    src.forEach(function(t){lbls.push(t.toUpperCase());env_d.push(D[t].env[mi]);ent_d.push(D[t].ent[mi]);adh_d.push(D[t].adh[mi]);});
+    mkC('g-evo',{type:'bar',data:{labels:lbls,datasets:[
+      {label:'Enviados',data:env_d,backgroundColor:'rgba(14,165,233,.55)',borderRadius:5,borderSkipped:false},
+      {label:'Entregados',data:ent_d,backgroundColor:'rgba(34,197,94,.7)',borderRadius:5,borderSkipped:false},
+      {label:'Adherencia',data:adh_d,backgroundColor:'rgba(245,158,11,.7)',borderRadius:5,borderSkipped:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:12,font:{size:11}}},tooltip:Object.assign({mode:'index'},TT)},scales:{x:{grid:{color:GC}},y:{grid:{color:GC},beginAtZero:true}}}});
+  }
+
+  // Zone chart
+  var zAll=[0,0,0,0,0,0,0];
+  src.forEach(function(t){D[t].zona.forEach(function(v,i){zAll[i]+=v;});});
+  mkC('g-zona',{type:'bar',data:{labels:D.zonas,datasets:[{label:'Mensajes entregados',data:zAll,backgroundColor:D.zonas.map(function(_,i){return 'hsl('+(200+i*22)+',70%,55%)';}),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return fmtN(c.parsed.x)+' mensajes';}}},TT)},scales:{x:{grid:{color:GC},ticks:{callback:function(v){return v>=1000?(v/1000)+'k':v;}}},y:{grid:{display:false}}}}});
+
+  // Impact chart (weighted average)
+  var impW=[0,0,0];
+  src.forEach(function(t){var e=sumM(D[t].ent,m);D[t].imp.forEach(function(p,i){impW[i]+=e*p/100;});});
+  var impTot=impW.reduce(function(a,b){return a+b;},0);
+  mkC('g-imp-ch',{type:'doughnut',data:{labels:['Impacto Alto','Impacto Medio','Impacto Bajo'],datasets:[{data:impW,backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:11,font:{size:11}}},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+fmtN(c.parsed)+' ('+( c.parsed/impTot*100).toFixed(1)+'%)';}}},TT)}}});
 }
 
-// ═══ NP ═══
-function applyNP(m){
-  var idxs=getIdxs(m==undefined?el('G_MES').value:m);
-  var prog=sum(NP.prog,idxs),env=sum(NP.env,idxs),ent=sum(NP.ent,idxs),adh=sum(NP.adh,idxs);
-  var nll=env-ent, nenv=prog-env;
-  var tenv=pct(env,prog),tent=pct(ent,env),tadh=pct(adh,ent);
-  tx('n-prog',fmtN(prog)); tx('n-env',fmtN(env)); tx('n-ent',fmtN(ent));
-  tx('n-adh',fmtN(adh)); tx('n-nll',fmtN(nll)); tx('n-nenv',fmtN(nenv));
-  tx('n-tenv',tenv+'%'); tx('n-tent',tent+'%'); tx('n-tadh',tadh+'%');
-  setBar('nf1','nfp1','nfc1',tenv,tenv,fmtN(env)+' msgs');
-  setBar('nf2','nfp2','nfc2',tent,tent,fmtN(ent)+' entregados');
-  setBar('nf3','nfp3','nfc3',tadh,tadh,fmtN(adh)+' leídos');
-  var tNoLL=pct(nll,env);
-  setBar('nf4','nfp4','nfc4',Math.min(30,parseFloat(tNoLL)*3),tNoLL,fmtN(nll)+' fallidos');
-  tx('n-ia',fmt(ent*NP.imp[0]/100)); tx('n-im',fmt(ent*NP.imp[1]/100)); tx('n-ib',fmt(ent*NP.imp[2]/100));
+// ─── ETA ─────────────────────────────────────────────────────────────────────
+function applyETA(){
+  var m=el('e-m').value, d=D.eta;
+  var prog=sumM(d.prog,m),env=sumM(d.env,m),ent=sumM(d.ent,m),adh=sumM(d.adh,m);
+  var nll=env-ent,nenv=prog-env;
+  var pEnv=p2(env,prog),pEnt=p2(ent,env),pAdh=p2(adh,env),pNll=p2(nll,env);
+  var mes=m==='all'?'Todos los meses':D.mes[parseInt(m)]+' 2026';
+
+  tx('e-prog',fmtN(prog)); tx('e-env',fmtN(env)); tx('e-env-s',pEnv.toFixed(1)+'% de programados');
+  tx('e-ent',fmtN(ent));   tx('e-ent-s',pEnt.toFixed(1)+'% de enviados');
+  tx('e-nll',fmtN(nll));   tx('e-nll-s',pNll.toFixed(1)+'% falla');
+  tx('e-adh',fmtN(adh));   tx('e-adh-s',pAdh.toFixed(1)+'% accion tomada');
+  tx('e-nenv',fmtN(nenv));  tx('e-nenv-s',p2(nenv,prog).toFixed(1)+'% no se enviaron');
+  tx('e-ftag',mes);
+
+  setFunnel('e',pEnv,fmtN(env)+' de '+fmtN(prog)+' programados enviados',
+    pEnt,fmtN(ent)+' de '+fmtN(env)+' enviados entregados',
+    pAdh,fmtN(adh)+' confirmaron arribo o tomaron accion',
+    pNll,fmtN(nll)+' sin entrega confirmada');
+
+  if(m==='all'){
+    mkC('e-evo',{type:'bar',data:{labels:D.mes,datasets:[
+      {label:'Programados',data:d.prog,backgroundColor:'rgba(100,116,139,.4)',borderRadius:4,borderSkipped:false},
+      {label:'Enviados',data:d.env,backgroundColor:'rgba(14,165,233,.55)',borderRadius:4,borderSkipped:false},
+      {label:'Entregados',data:d.ent,backgroundColor:'rgba(34,197,94,.7)',borderRadius:4,borderSkipped:false},
+      {label:'Adherencia',data:d.adh,backgroundColor:'rgba(245,158,11,.7)',borderRadius:4,borderSkipped:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:11,font:{size:11}}},tooltip:Object.assign({mode:'index'},TT)},scales:{x:{grid:{color:GC}},y:{grid:{color:GC},beginAtZero:true,ticks:{callback:function(v){return v>=1000?(v/1000)+'k':v;}}}}}});
+  } else {
+    var mi=parseInt(m);
+    mkC('e-evo',{type:'bar',data:{labels:['Programados','Enviados','Entregados','Adherencia'],
+      datasets:[{data:[d.prog[mi],d.env[mi],d.ent[mi],d.adh[mi]],backgroundColor:['rgba(100,116,139,.5)','rgba(14,165,233,.6)','rgba(34,197,94,.75)','rgba(245,158,11,.75)'],borderRadius:6,borderSkipped:false}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return fmtN(c.parsed.y)+' mensajes';}}},TT)},scales:{x:{grid:{color:GC}},y:{grid:{color:GC},beginAtZero:true}}}});
+  }
+
+  mkC('e-zona',{type:'bar',data:{labels:D.zonas,datasets:[{label:'Entregados',data:d.zona,backgroundColor:D.zonas.map(function(_,i){return 'hsl('+(140+i*8)+',60%,50%)';}),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return fmtN(c.parsed.x)+' mensajes ETA';}}},TT)},scales:{x:{grid:{color:GC},ticks:{callback:function(v){return v>=1000?(v/1000)+'k':v;}}},y:{grid:{display:false}}}}});
+
+  mkC('e-imp',{type:'doughnut',data:{labels:['Alto','Medio','Bajo'],datasets:[{data:d.imp,backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+c.parsed+'%';}}},TT)}}});
+
+  mkC('e-tln',{type:'line',data:{labels:D.mes,datasets:[
+    {label:'Nivel entrega %',data:d.entRate,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:'#22c55e',borderWidth:2},
+    {label:'Nivel adherencia %',data:d.adhRate,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.06)',fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:'#f59e0b',borderWidth:2}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:12,font:{size:11}}},tooltip:Object.assign({callbacks:{label:function(c){return c.dataset.label+': '+c.parsed.y+'%';}}},TT)},scales:{x:{grid:{color:GC}},y:{grid:{color:GC},min:60,max:95,ticks:{callback:function(v){return v+'%';}}}}}});
 }
 
-// ═══ RP ═══
-function applyRP(m){
-  var idxs=getIdxs(m==undefined?el('G_MES').value:m);
-  var prog=sum(RP.prog,idxs),env=sum(RP.env,idxs),ent=sum(RP.ent,idxs),adh=sum(RP.adh,idxs);
-  var nll=env-ent, nenv=prog-env;
-  var tenv=pct(env,prog),tent=pct(ent,env),tadh=pct(adh,ent);
-  tx('r-prog',fmtN(prog)); tx('r-env',fmtN(env)); tx('r-ent',fmtN(ent));
-  tx('r-adh',fmtN(adh)); tx('r-nll',fmtN(nll)); tx('r-nenv',fmtN(nenv));
-  tx('r-tenv',tenv+'%'); tx('r-tent',tent+'%'); tx('r-tadh',tadh+'%');
-  setBar('rf1','rfp1','rfc1',tenv,tenv,fmtN(env)+' msgs');
-  setBar('rf2','rfp2','rfc2',tent,tent,fmtN(ent)+' entregados');
-  setBar('rf3','rfp3','rfc3',tadh,tadh,fmtN(adh)+' leídos');
-  var tNoLL=pct(nll,env);
-  setBar('rf4','rfp4','rfc4',Math.min(30,parseFloat(tNoLL)*3),tNoLL,fmtN(nll)+' fallidos');
-  tx('r-ia',fmt(ent*RP.imp[0]/100)); tx('r-im',fmt(ent*RP.imp[1]/100)); tx('r-ib',fmt(ent*RP.imp[2]/100));
+// ─── NO PLANEADOS ─────────────────────────────────────────────────────────────
+function applyNP(){
+  var m=el('n-m').value, d=D.np;
+  var prog=sumM(d.prog,m),env=sumM(d.env,m),ent=sumM(d.ent,m),adh=sumM(d.adh,m);
+  var nll=env-ent,nenv=prog-env;
+  var pEnv=p2(env,prog),pEnt=p2(ent,env),pAdh=p2(adh,env),pNll=p2(nll,env);
+  var mes=m==='all'?'Todos los meses':D.mes[parseInt(m)]+' 2026';
+
+  tx('n-prog',fmtN(prog)); tx('n-env',fmtN(env)); tx('n-env-s',pEnv.toFixed(1)+'% de programados');
+  tx('n-ent',fmtN(ent));   tx('n-ent-s',pEnt.toFixed(1)+'% de enviados');
+  tx('n-nll',fmtN(nll));   tx('n-nll-s',pNll.toFixed(1)+'% falla');
+  tx('n-adh',fmtN(adh));   tx('n-adh-s',pAdh.toFixed(1)+'% gestionados');
+  tx('n-nenv',fmtN(nenv));  tx('n-nenv-s',p2(nenv,prog).toFixed(1)+'% no se enviaron');
+  tx('n-ftag',mes);
+
+  setFunnel('n',pEnv,fmtN(env)+' de '+fmtN(prog)+' programados enviados',
+    pEnt,fmtN(ent)+' de '+fmtN(env)+' enviados entregados',
+    pAdh,fmtN(adh)+' eventos gestionados tras recibir mensaje',
+    pNll,fmtN(nll)+' mensajes sin entrega');
+
+  if(m==='all'){
+    mkC('n-evo',{type:'bar',data:{labels:D.mes,datasets:[
+      {label:'Programados',data:d.prog,backgroundColor:'rgba(100,116,139,.4)',borderRadius:4,borderSkipped:false},
+      {label:'Enviados',data:d.env,backgroundColor:'rgba(245,158,11,.55)',borderRadius:4,borderSkipped:false},
+      {label:'Entregados',data:d.ent,backgroundColor:'rgba(34,197,94,.7)',borderRadius:4,borderSkipped:false},
+      {label:'Adherencia',data:d.adh,backgroundColor:'rgba(14,165,233,.7)',borderRadius:4,borderSkipped:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:11,font:{size:11}}},tooltip:Object.assign({mode:'index'},TT)},scales:{x:{grid:{color:GC}},y:{grid:{color:GC},beginAtZero:true}}}});
+  } else {
+    var mi=parseInt(m);
+    mkC('n-evo',{type:'bar',data:{labels:['Programados','Enviados','Entregados','Adherencia'],
+      datasets:[{data:[d.prog[mi],d.env[mi],d.ent[mi],d.adh[mi]],backgroundColor:['rgba(100,116,139,.5)','rgba(245,158,11,.6)','rgba(34,197,94,.75)','rgba(14,165,233,.75)'],borderRadius:6,borderSkipped:false}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return fmtN(c.parsed.y)+' mensajes';}}},TT)},scales:{x:{grid:{color:GC}},y:{grid:{color:GC},beginAtZero:true}}}});
+  }
+
+  mkC('n-zona',{type:'bar',data:{labels:D.zonas,datasets:[{label:'Entregados',data:d.zona,backgroundColor:D.zonas.map(function(_,i){return 'hsl('+(38+i*6)+',70%,55%)';}),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return fmtN(c.parsed.x)+' mensajes NP';}}},TT)},scales:{x:{grid:{color:GC}},y:{grid:{display:false}}}}});
+
+  mkC('n-imp',{type:'doughnut',data:{labels:['Alto','Medio','Bajo'],datasets:[{data:d.imp,backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+c.parsed+'%';}}},TT)}}});
+
+  mkC('n-tln',{type:'line',data:{labels:D.mes,datasets:[
+    {label:'Nivel entrega %',data:d.entRate,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:'#22c55e',borderWidth:2},
+    {label:'Nivel adherencia %',data:d.adhRate,borderColor:'#0ea5e9',backgroundColor:'rgba(14,165,233,.06)',fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:'#0ea5e9',borderWidth:2}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:12,font:{size:11}}},tooltip:Object.assign({callbacks:{label:function(c){return c.dataset.label+': '+c.parsed.y+'%';}}},TT)},scales:{x:{grid:{color:GC}},y:{grid:{color:GC},min:60,max:92,ticks:{callback:function(v){return v+'%';}}}}}});
 }
 
+// ─── REPLANIFICADOS ───────────────────────────────────────────────────────────
+function applyRP(){
+  var m=el('r-m').value, d=D.rp;
+  var prog=sumM(d.prog,m),env=sumM(d.env,m),ent=sumM(d.ent,m),adh=sumM(d.adh,m);
+  var nll=env-ent,nenv=prog-env;
+  var pEnv=p2(env,prog),pEnt=p2(ent,env),pAdh=p2(adh,env),pNll=p2(nll,env);
+  var mes=m==='all'?'Todos los meses':D.mes[parseInt(m)]+' 2026';
 
-// ═══ TAB NAVIGATION ═══
+  tx('r-prog',fmtN(prog)); tx('r-env',fmtN(env)); tx('r-env-s',pEnv.toFixed(1)+'% de programados');
+  tx('r-ent',fmtN(ent));   tx('r-ent-s',pEnt.toFixed(1)+'% de enviados');
+  tx('r-nll',fmtN(nll));   tx('r-nll-s',pNll.toFixed(1)+'% falla');
+  tx('r-adh',fmtN(adh));   tx('r-adh-s',pAdh.toFixed(1)+'% confirmaron');
+  tx('r-nenv',fmtN(nenv));  tx('r-nenv-s',p2(nenv,prog).toFixed(1)+'% no se enviaron');
+  tx('r-ftag',mes);
+
+  setFunnel('r',pEnv,fmtN(env)+' de '+fmtN(prog)+' programados enviados',
+    pEnt,fmtN(ent)+' de '+fmtN(env)+' enviados entregados',
+    pAdh,fmtN(adh)+' confirmaron la replanificacion operativa',
+    pNll,fmtN(nll)+' sin entrega confirmada');
+
+  if(m==='all'){
+    mkC('r-evo',{type:'bar',data:{labels:D.mes,datasets:[
+      {label:'Programados',data:d.prog,backgroundColor:'rgba(100,116,139,.4)',borderRadius:4,borderSkipped:false},
+      {label:'Enviados',data:d.env,backgroundColor:'rgba(168,85,247,.55)',borderRadius:4,borderSkipped:false},
+      {label:'Entregados',data:d.ent,backgroundColor:'rgba(34,197,94,.7)',borderRadius:4,borderSkipped:false},
+      {label:'Adherencia',data:d.adh,backgroundColor:'rgba(14,165,233,.7)',borderRadius:4,borderSkipped:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:11,font:{size:11}}},tooltip:Object.assign({mode:'index'},TT)},scales:{x:{grid:{color:GC}},y:{grid:{color:GC},beginAtZero:true,ticks:{callback:function(v){return v>=1000?(v/1000)+'k':v;}}}}}});
+  } else {
+    var mi=parseInt(m);
+    mkC('r-evo',{type:'bar',data:{labels:['Programados','Enviados','Entregados','Adherencia'],
+      datasets:[{data:[d.prog[mi],d.env[mi],d.ent[mi],d.adh[mi]],backgroundColor:['rgba(100,116,139,.5)','rgba(168,85,247,.6)','rgba(34,197,94,.75)','rgba(14,165,233,.75)'],borderRadius:6,borderSkipped:false}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return fmtN(c.parsed.y)+' mensajes';}}},TT)},scales:{x:{grid:{color:GC}},y:{grid:{color:GC},beginAtZero:true}}}});
+  }
+
+  mkC('r-zona',{type:'bar',data:{labels:D.zonas,datasets:[{label:'Entregados',data:d.zona,backgroundColor:D.zonas.map(function(_,i){return 'hsl('+(270+i*10)+',65%,60%)';}),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return fmtN(c.parsed.x)+' mensajes RP';}}},TT)},scales:{x:{grid:{color:GC},ticks:{callback:function(v){return v>=1000?(v/1000)+'k':v;}}},y:{grid:{display:false}}}}});
+
+  mkC('r-imp',{type:'doughnut',data:{labels:['Alto','Medio','Bajo'],datasets:[{data:d.imp,backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+c.parsed+'%';}}},TT)}}});
+
+  mkC('r-tln',{type:'line',data:{labels:D.mes,datasets:[
+    {label:'Nivel entrega %',data:d.entRate,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:'#22c55e',borderWidth:2},
+    {label:'Nivel adherencia %',data:d.adhRate,borderColor:'#a855f7',backgroundColor:'rgba(168,85,247,.06)',fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:'#a855f7',borderWidth:2}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:12,font:{size:11}}},tooltip:Object.assign({callbacks:{label:function(c){return c.dataset.label+': '+c.parsed.y+'%';}}},TT)},scales:{x:{grid:{color:GC}},y:{grid:{color:GC},min:60,max:95,ticks:{callback:function(v){return v+'%';}}}}}});
+}
+
+// ─── SYNC + TABS ─────────────────────────────────────────────────────────────
+function syncGlobal(m){
+  ['g-m','e-m','n-m','r-m'].forEach(function(id){var e=el(id);if(e)e.value=m;});
+  applyG();applyETA();applyNP();applyRP();
+}
+
 document.getElementById('NAV').addEventListener('click',function(e){
-  var t=e.target.closest('.tab');
-  if(!t) return;
-  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
-  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
-  t.classList.add('on');
-  var p=document.getElementById(t.dataset.p);
-  if(p) p.classList.add('on');
-  // Refrescar gráficas y métricas al cambiar de pestaña
-  var m = el('G_MES') ? el('G_MES').value : '99';
-  // resize + update charts so hidden-panel charts render correctly
-  Object.keys(CHARTS).forEach(function(k){
-    var c=CHARTS[k]; if(c && c.resize) c.resize();
-  });
-  if(Object.keys(CHARTS).length>0){
-    updateCharts(m);
-    applyG(m); applyETA(m); applyNP(m); applyRP(m);
-  }
+  var t=e.target.closest?e.target.closest('.tab'):null;if(!t)return;
+  document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});
+  document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('on');});
+  t.classList.add('on');document.getElementById(t.dataset.panel).classList.add('on');
+  var pid=t.dataset.panel;
+  if(pid==='p1')applyG();else if(pid==='p2')applyETA();else if(pid==='p3')applyNP();else if(pid==='p4')applyRP();
 });
+el('glo-rst').addEventListener('click',function(){el('glo-m').value='all';syncGlobal('all');});
 
-// ═══ CHART.JS ═══
-var CO={responsive:true,maintainAspectRatio:true,
-  plugins:{legend:{labels:{color:'#7b84b0',font:{size:10},boxWidth:12}}},
-  scales:{x:{ticks:{color:'#7b84b0',font:{size:10}},grid:{color:'#1e2240'}},
-          y:{ticks:{color:'#7b84b0',font:{size:10}},grid:{color:'#1e2240'}}}
-};
-var CO_H=JSON.parse(JSON.stringify(CO));
-CO_H.indexAxis='y';
-
-var CHARTS = {};
-
-function mkBar(id,labels,datasets,opts){
-  var ctx=el(id); if(!ctx) return null;
-  var cfg=JSON.parse(JSON.stringify(CO));
-  if(opts) Object.assign(cfg,opts);
-  return new Chart(ctx,{type:'bar',data:{labels:labels,datasets:datasets},options:cfg});
-}
-function mkLine(id,labels,datasets){
-  var ctx=el(id); if(!ctx) return null;
-  return new Chart(ctx,{type:'line',data:{labels:labels,datasets:datasets},options:CO});
-}
-function mkDonut(id,labels,data,colors){
-  var ctx=el(id); if(!ctx) return null;
-  return new Chart(ctx,{type:'doughnut',
-    data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:0}]},
-    options:{responsive:true,maintainAspectRatio:true,cutout:'60%',
-      plugins:{legend:{position:'bottom',labels:{color:'#7b84b0',font:{size:10},boxWidth:10}}}}
-  });
-}
-function mkHBar(id,labels,data,color){
-  var ctx=el(id); if(!ctx) return null;
-  return new Chart(ctx,{type:'bar',
-    data:{labels:labels,datasets:[{data:data,backgroundColor:color||'#3b82f688',borderRadius:3}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,
-      plugins:{legend:{display:false}},
-      scales:{x:{ticks:{color:'#7b84b0',font:{size:10}},grid:{color:'#1e2240'}},
-              y:{ticks:{color:'#7b84b0',font:{size:10}},grid:{display:false}}}}
-  });
-}
-
-// Tasas por mes para charts de línea
-var ENV_RATE = MES.map(function(_,i){ return (ETA.env[i]/ETA.prog[i]*100).toFixed(1)*1; });
-var ENT_RATE = MES.map(function(_,i){ return (ETA.ent[i]/ETA.env[i]*100).toFixed(1)*1; });
-var ADH_RATE = MES.map(function(_,i){ return (ETA.adh[i]/ETA.ent[i]*100).toFixed(1)*1; });
-var N_ENV_RATE = MES.map(function(_,i){ return (NP.env[i]/NP.prog[i]*100).toFixed(1)*1; });
-var N_ENT_RATE = MES.map(function(_,i){ return (NP.ent[i]/NP.env[i]*100).toFixed(1)*1; });
-var N_ADH_RATE = MES.map(function(_,i){ return (NP.adh[i]/NP.ent[i]*100).toFixed(1)*1; });
-var R_ENV_RATE = MES.map(function(_,i){ return (RP.env[i]/RP.prog[i]*100).toFixed(1)*1; });
-var R_ENT_RATE = MES.map(function(_,i){ return (RP.ent[i]/RP.env[i]*100).toFixed(1)*1; });
-var R_ADH_RATE = MES.map(function(_,i){ return (RP.adh[i]/RP.ent[i]*100).toFixed(1)*1; });
-
-// Plug de referencia 80% y 88%
-function addRefLine(chart,val,color,label){
-  chart.data.datasets.push({
-    type:'line',label:label,data:MES.map(function(){return val;}),
-    borderColor:color,borderWidth:1.5,borderDash:[4,4],
-    pointRadius:0,fill:false,tension:0
-  });
-  chart.update();
-}
-
-// Totales por mes (ETA+NP+RP)
-var G_PROG=MES.map(function(_,i){return ETA.prog[i]+NP.prog[i]+RP.prog[i];});
-var G_ENV=MES.map(function(_,i){return ETA.env[i]+NP.env[i]+RP.env[i];});
-var G_ENT=MES.map(function(_,i){return ETA.ent[i]+NP.ent[i]+RP.ent[i];});
-var G_ADH=MES.map(function(_,i){return ETA.adh[i]+NP.adh[i]+RP.adh[i];});
-
-
-function updateCharts(m){
-  var idxs=getIdxs(m);
-  var labels=idxs.map(function(i){return MES[i];});
-
-  // Ratios para zonas proporcionales
-  var etaTot=ETA.prog.reduce(function(a,b){return a+b;},0);
-  var npTot=NP.prog.reduce(function(a,b){return a+b;},0);
-  var rpTot=RP.prog.reduce(function(a,b){return a+b;},0);
-  var allTot=etaTot+npTot+rpTot;
-  var etaSel=sum(ETA.prog,idxs);
-  var npSel=sum(NP.prog,idxs);
-  var rpSel=sum(RP.prog,idxs);
-  var allSel=etaSel+npSel+rpSel;
-  var eR=etaTot?etaSel/etaTot:1;
-  var nR=npTot?npSel/npTot:1;
-  var rR=rpTot?rpSel/rpTot:1;
-  var gR=allTot?allSel/allTot:1;
-
-  // Global bar
-  if(CHARTS.gc1){
-    CHARTS.gc1.data.labels=labels;
-    CHARTS.gc1.data.datasets[0].data=idxs.map(function(i){return G_PROG[i];});
-    CHARTS.gc1.data.datasets[1].data=idxs.map(function(i){return G_ENV[i];});
-    CHARTS.gc1.data.datasets[2].data=idxs.map(function(i){return G_ENT[i];});
-    CHARTS.gc1.resize(); CHARTS.gc1.update();
-  }
-  // Global zona hbar
-  if(CHARTS.gc2){
-    CHARTS.gc2.data.datasets[0].data=ZONAS.map(function(_,i){
-      return Math.round((ETA.zona[i]+NP.zona[i]+RP.zona[i])*gR);
-    });
-    CHARTS.gc2.resize(); CHARTS.gc2.update();
-  }
-  // Global line rates
-  if(CHARTS.gc3){
-    CHARTS.gc3.data.labels=labels;
-    CHARTS.gc3.data.datasets[0].data=idxs.map(function(i){return (G_ENV[i]/G_PROG[i]*100).toFixed(1)*1;});
-    CHARTS.gc3.data.datasets[1].data=idxs.map(function(i){return (G_ENT[i]/G_ENV[i]*100).toFixed(1)*1;});
-    CHARTS.gc3.data.datasets[2].data=idxs.map(function(i){return (G_ADH[i]/G_ENT[i]*100).toFixed(1)*1;});
-    if(CHARTS.gc3.data.datasets[3]) CHARTS.gc3.data.datasets[3].data=labels.map(function(){return 80;});
-    if(CHARTS.gc3.data.datasets[4]) CHARTS.gc3.data.datasets[4].data=labels.map(function(){return 88;});
-    CHARTS.gc3.resize(); CHARTS.gc3.update();
-  }
-  // ETA bar
-  if(CHARTS.ec1){
-    CHARTS.ec1.data.labels=labels;
-    CHARTS.ec1.data.datasets[0].data=idxs.map(function(i){return ETA.prog[i];});
-    CHARTS.ec1.data.datasets[1].data=idxs.map(function(i){return ETA.env[i];});
-    CHARTS.ec1.data.datasets[2].data=idxs.map(function(i){return ETA.ent[i];});
-    CHARTS.ec1.data.datasets[3].data=idxs.map(function(i){return ETA.adh[i];});
-    CHARTS.ec1.resize(); CHARTS.ec1.update();
-  }
-  // ETA zona hbar
-  if(CHARTS.ec2){
-    CHARTS.ec2.data.datasets[0].data=ETA.zona.map(function(v){return Math.round(v*eR);});
-    CHARTS.ec2.resize(); CHARTS.ec2.update();
-  }
-  // ETA line rates
-  if(CHARTS.ec4){
-    CHARTS.ec4.data.labels=labels;
-    CHARTS.ec4.data.datasets[0].data=idxs.map(function(i){return ENV_RATE[i];});
-    CHARTS.ec4.data.datasets[1].data=idxs.map(function(i){return ENT_RATE[i];});
-    CHARTS.ec4.data.datasets[2].data=idxs.map(function(i){return ADH_RATE[i];});
-    if(CHARTS.ec4.data.datasets[3]) CHARTS.ec4.data.datasets[3].data=labels.map(function(){return 80;});
-    if(CHARTS.ec4.data.datasets[4]) CHARTS.ec4.data.datasets[4].data=labels.map(function(){return 88;});
-    CHARTS.ec4.resize(); CHARTS.ec4.update();
-  }
-  // NP bar
-  if(CHARTS.nc1){
-    CHARTS.nc1.data.labels=labels;
-    CHARTS.nc1.data.datasets[0].data=idxs.map(function(i){return NP.prog[i];});
-    CHARTS.nc1.data.datasets[1].data=idxs.map(function(i){return NP.env[i];});
-    CHARTS.nc1.data.datasets[2].data=idxs.map(function(i){return NP.ent[i];});
-    CHARTS.nc1.data.datasets[3].data=idxs.map(function(i){return NP.adh[i];});
-    CHARTS.nc1.resize(); CHARTS.nc1.update();
-  }
-  // NP zona hbar
-  if(CHARTS.nc2){
-    CHARTS.nc2.data.datasets[0].data=NP.zona.map(function(v){return Math.round(v*nR);});
-    CHARTS.nc2.resize(); CHARTS.nc2.update();
-  }
-  // NP line rates
-  if(CHARTS.nc4){
-    CHARTS.nc4.data.labels=labels;
-    CHARTS.nc4.data.datasets[0].data=idxs.map(function(i){return N_ENV_RATE[i];});
-    CHARTS.nc4.data.datasets[1].data=idxs.map(function(i){return N_ENT_RATE[i];});
-    CHARTS.nc4.data.datasets[2].data=idxs.map(function(i){return N_ADH_RATE[i];});
-    if(CHARTS.nc4.data.datasets[3]) CHARTS.nc4.data.datasets[3].data=labels.map(function(){return 80;});
-    if(CHARTS.nc4.data.datasets[4]) CHARTS.nc4.data.datasets[4].data=labels.map(function(){return 88;});
-    CHARTS.nc4.resize(); CHARTS.nc4.update();
-  }
-  // RP bar
-  if(CHARTS.rc1){
-    CHARTS.rc1.data.labels=labels;
-    CHARTS.rc1.data.datasets[0].data=idxs.map(function(i){return RP.prog[i];});
-    CHARTS.rc1.data.datasets[1].data=idxs.map(function(i){return RP.env[i];});
-    CHARTS.rc1.data.datasets[2].data=idxs.map(function(i){return RP.ent[i];});
-    CHARTS.rc1.data.datasets[3].data=idxs.map(function(i){return RP.adh[i];});
-    CHARTS.rc1.resize(); CHARTS.rc1.update();
-  }
-  // RP zona hbar
-  if(CHARTS.rc2){
-    CHARTS.rc2.data.datasets[0].data=RP.zona.map(function(v){return Math.round(v*rR);});
-    CHARTS.rc2.resize(); CHARTS.rc2.update();
-  }
-  // RP line rates
-  if(CHARTS.rc4){
-    CHARTS.rc4.data.labels=labels;
-    CHARTS.rc4.data.datasets[0].data=idxs.map(function(i){return R_ENV_RATE[i];});
-    CHARTS.rc4.data.datasets[1].data=idxs.map(function(i){return R_ENT_RATE[i];});
-    CHARTS.rc4.data.datasets[2].data=idxs.map(function(i){return R_ADH_RATE[i];});
-    if(CHARTS.rc4.data.datasets[3]) CHARTS.rc4.data.datasets[3].data=labels.map(function(){return 80;});
-    if(CHARTS.rc4.data.datasets[4]) CHARTS.rc4.data.datasets[4].data=labels.map(function(){return 88;});
-    CHARTS.rc4.resize(); CHARTS.rc4.update();
-  }
-}
-window.addEventListener('load',function(){
-  // G CHART 1 — Evolución global
-  CHARTS.gc1 = mkBar('gc1',MES,[
-    {label:'Programados',data:G_PROG,backgroundColor:'#3b82f644',borderRadius:3},
-    {label:'Enviados',data:G_ENV,backgroundColor:'#22c55e88',borderRadius:3},
-    {label:'Entregados',data:G_ENT,backgroundColor:'#a855f788',borderRadius:3}
-  ]);
-
-  // G CHART 2 — Zonas (ETA+NP+RP)
-  var totZona=ZONAS.map(function(_,i){return ETA.zona[i]+NP.zona[i]+RP.zona[i];});
-  CHARTS.gc2 = mkHBar('gc2',ZONAS,totZona,'#06b6d488');
-
-  // G CHART 3 — Tasas globales
-  var G_ENV_R=MES.map(function(_,i){return (G_ENV[i]/G_PROG[i]*100).toFixed(1)*1;});
-  var G_ENT_R=MES.map(function(_,i){return (G_ENT[i]/G_ENV[i]*100).toFixed(1)*1;});
-  var G_ADH_R=MES.map(function(_,i){return (G_ADH[i]/G_ENT[i]*100).toFixed(1)*1;});
-  CHARTS.gc3 = mkLine('gc3',MES,[
-    {label:'% Envío',data:G_ENV_R,borderColor:'#3b82f6',backgroundColor:'#3b82f622',fill:true,tension:.3,pointRadius:3},
-    {label:'% Entrega',data:G_ENT_R,borderColor:'#22c55e',backgroundColor:'#22c55e11',fill:true,tension:.3,pointRadius:3},
-    {label:'% Adherencia',data:G_ADH_R,borderColor:'#a855f7',backgroundColor:'#a855f711',fill:true,tension:.3,pointRadius:3}
-  ]);
-  addRefLine(CHARTS.gc3,80,'#f59e0b','Umbral 80%'); addRefLine(CHARTS.gc3,88,'#06b6d4','Objetivo 88%');
-
-  // ETA CHART 1
-  CHARTS.ec1 = mkBar('ec1',MES,[
-    {label:'Programados',data:ETA.prog,backgroundColor:'#3b82f644',borderRadius:3},
-    {label:'Enviados',data:ETA.env,backgroundColor:'#22c55e88',borderRadius:3},
-    {label:'Entregados',data:ETA.ent,backgroundColor:'#06b6d488',borderRadius:3},
-    {label:'Adherencia',data:ETA.adh,backgroundColor:'#a855f788',borderRadius:3}
-  ]);
-  CHARTS.ec2 = mkHBar('ec2',ZONAS,ETA.zona,'#3b82f688');
-  CHARTS.ec3 = mkDonut('ec3',['Alto','Medio','Bajo'],ETA.imp,['#22c55e','#f59e0b','#7b84b0']);
-  CHARTS.ec4 = mkLine('ec4',MES,[
-    {label:'% Envío',data:ENV_RATE,borderColor:'#3b82f6',tension:.3,pointRadius:3,fill:false},
-    {label:'% Entrega',data:ENT_RATE,borderColor:'#22c55e',tension:.3,pointRadius:3,fill:false},
-    {label:'% Adherencia',data:ADH_RATE,borderColor:'#a855f7',tension:.3,pointRadius:3,fill:false}
-  ]);
-  addRefLine(CHARTS.ec4,80,'#f59e0b','Umbral 80%'); addRefLine(CHARTS.ec4,88,'#06b6d4','Objetivo 88%');
-
-  // NP CHART 1
-  CHARTS.nc1 = mkBar('nc1',MES,[
-    {label:'Programados',data:NP.prog,backgroundColor:'#f59e0b44',borderRadius:3},
-    {label:'Enviados',data:NP.env,backgroundColor:'#22c55e88',borderRadius:3},
-    {label:'Entregados',data:NP.ent,backgroundColor:'#06b6d488',borderRadius:3},
-    {label:'Adherencia',data:NP.adh,backgroundColor:'#a855f788',borderRadius:3}
-  ]);
-  CHARTS.nc2 = mkHBar('nc2',ZONAS,NP.zona,'#f59e0b88');
-  CHARTS.nc3 = mkDonut('nc3',['Alto','Medio','Bajo'],NP.imp,['#22c55e','#f59e0b','#7b84b0']);
-  CHARTS.nc4 = mkLine('nc4',MES,[
-    {label:'% Envío',data:N_ENV_RATE,borderColor:'#3b82f6',tension:.3,pointRadius:3,fill:false},
-    {label:'% Entrega',data:N_ENT_RATE,borderColor:'#22c55e',tension:.3,pointRadius:3,fill:false},
-    {label:'% Adherencia',data:N_ADH_RATE,borderColor:'#a855f7',tension:.3,pointRadius:3,fill:false}
-  ]);
-  addRefLine(CHARTS.nc4,80,'#f59e0b','Umbral 80%'); addRefLine(CHARTS.nc4,88,'#06b6d4','Objetivo 88%');
-
-  // RP CHART 1
-  CHARTS.rc1 = mkBar('rc1',MES,[
-    {label:'Programados',data:RP.prog,backgroundColor:'#a855f744',borderRadius:3},
-    {label:'Enviados',data:RP.env,backgroundColor:'#22c55e88',borderRadius:3},
-    {label:'Entregados',data:RP.ent,backgroundColor:'#06b6d488',borderRadius:3},
-    {label:'Adherencia',data:RP.adh,backgroundColor:'#6366f188',borderRadius:3}
-  ]);
-  CHARTS.rc2 = mkHBar('rc2',ZONAS,RP.zona,'#a855f788');
-  CHARTS.rc3 = mkDonut('rc3',['Alto','Medio','Bajo'],RP.imp,['#22c55e','#f59e0b','#7b84b0']);
-  CHARTS.rc4 = mkLine('rc4',MES,[
-    {label:'% Envío',data:R_ENV_RATE,borderColor:'#3b82f6',tension:.3,pointRadius:3,fill:false},
-    {label:'% Entrega',data:R_ENT_RATE,borderColor:'#22c55e',tension:.3,pointRadius:3,fill:false},
-    {label:'% Adherencia',data:R_ADH_RATE,borderColor:'#a855f7',tension:.3,pointRadius:3,fill:false}
-  ]);
-  addRefLine(CHARTS.rc4,80,'#f59e0b','Umbral 80%'); addRefLine(CHARTS.rc4,88,'#06b6d4','Objetivo 88%');
-
-  // Init
-  applyG(99); applyETA(99); applyNP(99); applyRP(99);
- 
-  updateCharts(99);
-});
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+applyG();applyETA();applyNP();applyRP();
 </script>
 <div class="lis-brand">
   <div class="lis-brand-icon">LIS</div>
-  <div class="lis-brand-text">
+  <div>
     <div class="lis-brand-name">LIS ChatMasivo</div>
     <div class="lis-brand-sub">Última Milla · Antioquia 2026</div>
   </div>
