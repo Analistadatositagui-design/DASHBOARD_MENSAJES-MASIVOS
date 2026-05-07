@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>LIS Chat Masivo &middot; Dashboard Operativo DPO 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{--bg:#060d1a;--s:#0d1829;--s2:#111f35;--bd:#1e3352;--bd2:#253d5e;--blue:#0ea5e9;--blue2:#38bdf8;--green:#22c55e;--green2:#4ade80;--amber:#f59e0b;--amber2:#fbbf24;--red:#ef4444;--red2:#fca5a5;--purple:#a855f7;--purple2:#d8b4fe;--tx:#e2e8f0;--tx2:#94a3b8;--tx3:#64748b;--r:12px;--r2:8px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -28,6 +29,9 @@ header{background:linear-gradient(180deg,#0a1628,var(--s));border-bottom:1px sol
 .gbr{padding:4px 11px;background:rgba(14,165,233,.1);color:var(--blue2);border:1px solid rgba(14,165,233,.22);border-radius:6px;font-size:.68rem;font-weight:700;cursor:pointer;transition:background .18s}
 .gbr:hover{background:rgba(14,165,233,.2)}
 .gfsync{font-size:.62rem;color:var(--tx3);margin-left:auto;font-style:italic}
+.exp-btn{padding:4px 12px;border-radius:6px;font-size:.68rem;font-weight:700;cursor:pointer;transition:all .18s;border:1px solid}
+.exp-xl{background:rgba(34,197,94,.1);color:#4ade80;border-color:rgba(34,197,94,.28)}.exp-xl:hover{background:rgba(34,197,94,.22);transform:translateY(-1px)}
+.exp-pd{background:rgba(239,68,68,.1);color:#fca5a5;border-color:rgba(239,68,68,.28)}.exp-pd:hover{background:rgba(239,68,68,.22);transform:translateY(-1px)}
 nav{background:#0a1628;border-bottom:1px solid var(--bd);padding:0 22px;display:flex;overflow-x:auto;position:sticky;top:0;z-index:100}
 .tab{padding:11px 18px;font-size:.75rem;font-weight:600;color:var(--tx3);border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s}
 .tab:hover{color:var(--tx2);background:rgba(255,255,255,.02)}
@@ -112,6 +116,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:rgba(255,255,255,.02)
   font-size:10px;font-weight:900;color:#fff;letter-spacing:-0.5px;}
 .lis-brand-name{font-size:11px;font-weight:700;color:#c7d2fe;letter-spacing:.3px;line-height:1.3}
 .lis-brand-sub{font-size:9px;color:#7b84b0;letter-spacing:.2px}
+@media print{nav,header,.gfbar,.fbar,.fbtn,.exp-btn,.gbr,.lis-brand,.mes-badge{display:none!important}.panel{display:block!important;padding:10px}body{background:#fff;color:#000}.k,.fbox,.cc{break-inside:avoid;border:1px solid #ccc!important}.kv,.kl,.ks,.cct,.ccs,.fbox-title,.tx,.tx2,.tx3{color:#222!important}canvas{max-width:100%}}
 </style>
 </head>
 <body>
@@ -142,7 +147,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:rgba(255,255,255,.02)
     <option value="3">Abril 2026</option>
   </select>
   <button class="gbr" id="glo-rst">&#8635; Limpiar</button>
-  <span class="gfsync">Sincroniza todas las pesta&ntilde;as en tiempo real</span>
+  <button class="exp-btn exp-xl" onclick="exportExcel()">&#8595; Exportar Excel</button><button class="exp-btn exp-pd" onclick="exportPDF()">&#8595; Exportar PDF</button><span class="gfsync">Sincroniza todas las pesta&ntilde;as en tiempo real</span>
 </div>
 
 <nav id="NAV">
@@ -225,12 +230,12 @@ tr:last-child td{border-bottom:none}tr:hover td{background:rgba(255,255,255,.02)
       <div class="ch md"><canvas id="g-zona"></canvas></div>
     </div>
     <div class="cc">
-      <div class="cch"><div><div class="cct">Nivel de Impacto Operativo</div><div class="ccs">Clasificaci&oacute;n por impacto en la operaci&oacute;n</div></div><span class="ccb">Impacto</span></div>
+      <div class="cch"><div><div class="cct">P&eacute;rdida del Funnel &mdash; Global</div><div class="ccs">D&oacute;nde se pierden los mensajes en el ciclo</div></div><span class="ccb">An&aacute;lisis real</span></div>
       <div class="ch md"><canvas id="g-imp-ch"></canvas></div>
       <div class="srow" id="g-imp-stats">
-        <div class="scard"><div class="sc-v" style="color:var(--red)">49%</div><div class="sc-l">Impacto Alto</div></div>
-        <div class="scard"><div class="sc-v" style="color:var(--amber)">34%</div><div class="sc-l">Impacto Medio</div></div>
-        <div class="scard"><div class="sc-v" style="color:var(--blue2)">17%</div><div class="sc-l">Impacto Bajo</div></div>
+        <div class="scard"><div class="sc-v" id="g-noenv-v" style="color:var(--red)">—</div><div class="sc-l">No enviados</div></div>
+        <div class="scard"><div class="sc-v" id="g-noent-v" style="color:var(--amber)">—</div><div class="sc-l">No entregados</div></div>
+        <div class="scard"><div class="sc-v" id="g-sinadh-v" style="color:var(--blue2)">—</div><div class="sc-l">Sin adherencia</div></div>
       </div>
     </div>
   </div>
@@ -301,19 +306,14 @@ tr:last-child td{border-bottom:none}tr:hover td{background:rgba(255,255,255,.02)
       <div class="ch"><canvas id="e-zona"></canvas></div>
     </div>
     <div class="cc">
-      <div class="cch"><div><div class="cct">Nivel de Impacto ETA</div><div class="ccs">Impacto operativo de mensajes entregados</div></div><span class="ccb">Impacto</span></div>
-      <div class="ch sm"><div style="margin-top:8px;font-size:10px;color:#64748b;line-height:1.5">
-  <div style="margin-bottom:4px"><span style="color:#22c55e;font-weight:700">&#9679; Alto</span> — Cliente confirmó recepción · evitó reproceso de ruta</div>
-  <div style="margin-bottom:4px"><span style="color:#f59e0b;font-weight:700">&#9679; Medio</span> — Cliente informado y disponible · reducción tiempo de espera</div>
-  <div><span style="color:#7b84b0;font-weight:700">&#9679; Bajo</span> — Notificación sin acción directa · entrega completada</div>
-</div>
-<canvas id="e-imp"></canvas></div>
+      <div class="cch"><div><div class="cct">P&eacute;rdida del Funnel ETA</div><div class="ccs">D&oacute;nde se pierden los mensajes en el ciclo</div></div><span class="ccb">An&aacute;lisis real</span></div>
+      <div class="ch sm"><canvas id="e-imp"></canvas></div>
       <div class="srow">
-        <div class="scard"><div class="sc-v" style="color:var(--red)">35%</div><div class="sc-l">Alto</div></div>
-        <div class="scard"><div class="sc-v" style="color:var(--amber)">40%</div><div class="sc-l">Medio</div></div>
-        <div class="scard"><div class="sc-v" style="color:var(--blue2)">25%</div><div class="sc-l">Bajo</div></div>
+        <div class="scard"><div class="sc-v" id="e-noenv-v" style="color:var(--red)">—</div><div class="sc-l">No enviados</div></div>
+        <div class="scard"><div class="sc-v" id="e-noent-v" style="color:var(--amber)">—</div><div class="sc-l">No entregados</div></div>
+        <div class="scard"><div class="sc-v" id="e-sinadh-v" style="color:var(--blue2)">—</div><div class="sc-l">Sin adherencia</div></div>
       </div>
-      <div class="ins"><strong>Impacto</strong>35% de mensajes ETA generaron cambio operativo inmediato (actualizaci&oacute;n de ruta o confirmaci&oacute;n de ETA modificado).</div>
+      <div class="ins"><strong>P&eacute;rdida real</strong>Desglose de mensajes ETA que no completaron el ciclo: no enviados (falla de sistema), enviados sin entrega, y entregados sin acci&oacute;n del receptor.</div>
     </div>
     <div class="cc">
       <div class="cch"><div><div class="cct">Nivel de Entrega y Adherencia por Mes</div><div class="ccs">Tendencia mensual de eficiencia</div></div><span class="ccb">L&iacute;nea</span></div>
@@ -388,19 +388,14 @@ tr:last-child td{border-bottom:none}tr:hover td{background:rgba(255,255,255,.02)
       <div class="ch"><canvas id="n-zona"></canvas></div>
     </div>
     <div class="cc">
-      <div class="cch"><div><div class="cct">Nivel de Impacto NP</div><div class="ccs">Impacto operativo de mensajes no planeados</div></div><span class="ccb">Impacto</span></div>
-      <div class="ch sm"><div style="margin-top:8px;font-size:10px;color:#64748b;line-height:1.5">
-  <div style="margin-bottom:4px"><span style="color:#22c55e;font-weight:700">&#9679; Alto</span> — Cliente confirmó recepción · evitó reproceso de ruta</div>
-  <div style="margin-bottom:4px"><span style="color:#f59e0b;font-weight:700">&#9679; Medio</span> — Cliente informado y disponible · reducción tiempo de espera</div>
-  <div><span style="color:#7b84b0;font-weight:700">&#9679; Bajo</span> — Notificación sin acción directa · entrega completada</div>
-</div>
-<canvas id="n-imp"></canvas></div>
+      <div class="cch"><div><div class="cct">P&eacute;rdida del Funnel NP</div><div class="ccs">D&oacute;nde se pierden los mensajes en el ciclo</div></div><span class="ccb">An&aacute;lisis real</span></div>
+      <div class="ch sm"><canvas id="n-imp"></canvas></div>
       <div class="srow">
-        <div class="scard"><div class="sc-v" style="color:var(--red)">55%</div><div class="sc-l">Alto</div></div>
-        <div class="scard"><div class="sc-v" style="color:var(--amber)">30%</div><div class="sc-l">Medio</div></div>
-        <div class="scard"><div class="sc-v" style="color:var(--blue2)">15%</div><div class="sc-l">Bajo</div></div>
+        <div class="scard"><div class="sc-v" id="n-noenv-v" style="color:var(--red)">—</div><div class="sc-l">No enviados</div></div>
+        <div class="scard"><div class="sc-v" id="n-noent-v" style="color:var(--amber)">—</div><div class="sc-l">No entregados</div></div>
+        <div class="scard"><div class="sc-v" id="n-sinadh-v" style="color:var(--blue2)">—</div><div class="sc-l">Sin adherencia</div></div>
       </div>
-      <div class="ins"><strong>Impacto cr&iacute;tico</strong>El 55% de NP tienen impacto Alto, siendo el tipo de mensaje de mayor criticidad operativa. Cada NP no atendido puede generar una falla en la cadena de entrega.</div>
+      <div class="ins"><strong>P&eacute;rdida real</strong>Los NP tienen la mayor falla de entrega (15.6%). El an&aacute;lisis muestra exactamente en qu&eacute; etapa del funnel se pierde cada mensaje no planeado.</div>
     </div>
     <div class="cc">
       <div class="cch"><div><div class="cct">Entrega y Adherencia por Mes NP</div><div class="ccs">Tendencia mensual de eficiencia operativa</div></div><span class="ccb">L&iacute;nea</span></div>
@@ -475,19 +470,14 @@ tr:last-child td{border-bottom:none}tr:hover td{background:rgba(255,255,255,.02)
       <div class="ch"><canvas id="r-zona"></canvas></div>
     </div>
     <div class="cc">
-      <div class="cch"><div><div class="cct">Nivel de Impacto RP</div><div class="ccs">Impacto operativo de replanificaciones</div></div><span class="ccb">Impacto</span></div>
-      <div class="ch sm"><div style="margin-top:8px;font-size:10px;color:#64748b;line-height:1.5">
-  <div style="margin-bottom:4px"><span style="color:#22c55e;font-weight:700">&#9679; Alto</span> — Cliente confirmó recepción · evitó reproceso de ruta</div>
-  <div style="margin-bottom:4px"><span style="color:#f59e0b;font-weight:700">&#9679; Medio</span> — Cliente informado y disponible · reducción tiempo de espera</div>
-  <div><span style="color:#7b84b0;font-weight:700">&#9679; Bajo</span> — Notificación sin acción directa · entrega completada</div>
-</div>
-<canvas id="r-imp"></canvas></div>
+      <div class="cch"><div><div class="cct">P&eacute;rdida del Funnel RP</div><div class="ccs">D&oacute;nde se pierden los mensajes en el ciclo</div></div><span class="ccb">An&aacute;lisis real</span></div>
+      <div class="ch sm"><canvas id="r-imp"></canvas></div>
       <div class="srow">
-        <div class="scard"><div class="sc-v" style="color:var(--red)">60%</div><div class="sc-l">Alto</div></div>
-        <div class="scard"><div class="sc-v" style="color:var(--amber)">28%</div><div class="sc-l">Medio</div></div>
-        <div class="scard"><div class="sc-v" style="color:var(--blue2)">12%</div><div class="sc-l">Bajo</div></div>
+        <div class="scard"><div class="sc-v" id="r-noenv-v" style="color:var(--red)">—</div><div class="sc-l">No enviados</div></div>
+        <div class="scard"><div class="sc-v" id="r-noent-v" style="color:var(--amber)">—</div><div class="sc-l">No entregados</div></div>
+        <div class="scard"><div class="sc-v" id="r-sinadh-v" style="color:var(--blue2)">—</div><div class="sc-l">Sin adherencia</div></div>
       </div>
-      <div class="ins"><strong>Impacto alto</strong>El 60% de los RP generan cambio operativo inmediato: reprogramaci&oacute;n de ruta, cambio de ventana de entrega o asignaci&oacute;n de nuevo conductor.</div>
+      <div class="ins"><strong>P&eacute;rdida real</strong>Los RP crecieron +760% en el per&iacute;odo. El an&aacute;lisis de p&eacute;rdida muestra si ese crecimiento impact&oacute; la eficiencia de entrega en cada etapa del funnel.</div>
     </div>
     <div class="cc">
       <div class="cch"><div><div class="cct">Entrega y Adherencia por Mes RP</div><div class="ccs">Tendencia mensual de eficiencia</div></div><span class="ccb">L&iacute;nea</span></div>
@@ -625,11 +615,12 @@ function applyG(){
   src.forEach(function(t){D[t].zona.forEach(function(v,i){zAll[i]+=v;});});
   mkC('g-zona',{type:'bar',data:{labels:D.zonas,datasets:[{label:'Mensajes entregados',data:zAll,backgroundColor:D.zonas.map(function(_,i){return 'hsl('+(200+i*22)+',70%,55%)';}),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return fmtN(c.parsed.x)+' mensajes';}}},TT)},scales:{x:{grid:{color:GC},ticks:{callback:function(v){return v>=1000?(v/1000)+'k':v;}}},y:{grid:{display:false}}}}});
 
-  // Impact chart (weighted average)
-  var impW=[0,0,0];
-  src.forEach(function(t){var e=sumM(D[t].ent,m);D[t].imp.forEach(function(p,i){impW[i]+=e*p/100;});});
-  var impTot=impW.reduce(function(a,b){return a+b;},0);
-  mkC('g-imp-ch',{type:'doughnut',data:{labels:['Impacto Alto','Impacto Medio','Impacto Bajo'],datasets:[{data:impW,backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:11,font:{size:11}}},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+fmtN(c.parsed)+' ('+( c.parsed/impTot*100).toFixed(1)+'%)';}}},TT)}}});
+  // Funnel loss chart — datos reales
+  var gNoEnv=0,gNoEnt=0,gSinAdh=0;
+  src.forEach(function(t){gNoEnv+=sumM(D[t].prog,m)-sumM(D[t].env,m);gNoEnt+=sumM(D[t].env,m)-sumM(D[t].ent,m);gSinAdh+=sumM(D[t].ent,m)-sumM(D[t].adh,m);});
+  var gTotL=gNoEnv+gNoEnt+gSinAdh;
+  tx('g-noenv-v',fmtN(gNoEnv)); tx('g-noent-v',fmtN(gNoEnt)); tx('g-sinadh-v',fmtN(gSinAdh));
+  mkC('g-imp-ch',{type:'doughnut',data:{labels:['No enviados','No entregados','Sin adherencia'],datasets:[{data:[gNoEnv,gNoEnt,gSinAdh],backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:11,font:{size:11}}},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+fmtN(c.parsed)+(gTotL>0?' ('+(c.parsed/gTotL*100).toFixed(1)+'%)':'');}}},TT)}}});
 }
 
 // ─── ETA ─────────────────────────────────────────────────────────────────────
@@ -668,7 +659,10 @@ function applyETA(){
 
   mkC('e-zona',{type:'bar',data:{labels:D.zonas,datasets:[{label:'Entregados',data:d.zona,backgroundColor:D.zonas.map(function(_,i){return 'hsl('+(140+i*8)+',60%,50%)';}),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return fmtN(c.parsed.x)+' mensajes ETA';}}},TT)},scales:{x:{grid:{color:GC},ticks:{callback:function(v){return v>=1000?(v/1000)+'k':v;}}},y:{grid:{display:false}}}}});
 
-  mkC('e-imp',{type:'doughnut',data:{labels:['Alto','Medio','Bajo'],datasets:[{data:d.imp,backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+c.parsed+'%';}}},TT)}}});
+  var eNoEnv=sumM(d.prog,m)-sumM(d.env,m),eNoEnt=sumM(d.env,m)-sumM(d.ent,m),eSinAdh=sumM(d.ent,m)-sumM(d.adh,m);
+  var eTotL=eNoEnv+eNoEnt+eSinAdh;
+  tx('e-noenv-v',fmtN(eNoEnv)); tx('e-noent-v',fmtN(eNoEnt)); tx('e-sinadh-v',fmtN(eSinAdh));
+  mkC('e-imp',{type:'doughnut',data:{labels:['No enviados','No entregados','Sin adherencia'],datasets:[{data:[eNoEnv,eNoEnt,eSinAdh],backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+fmtN(c.parsed)+(eTotL>0?' ('+(c.parsed/eTotL*100).toFixed(1)+'%)':'');}}},TT)}}});
 
   mkC('e-tln',{type:'line',data:{labels:D.mes,datasets:[
     {label:'Nivel entrega %',data:d.entRate,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:'#22c55e',borderWidth:2},
@@ -712,7 +706,10 @@ function applyNP(){
 
   mkC('n-zona',{type:'bar',data:{labels:D.zonas,datasets:[{label:'Entregados',data:d.zona,backgroundColor:D.zonas.map(function(_,i){return 'hsl('+(38+i*6)+',70%,55%)';}),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return fmtN(c.parsed.x)+' mensajes NP';}}},TT)},scales:{x:{grid:{color:GC}},y:{grid:{display:false}}}}});
 
-  mkC('n-imp',{type:'doughnut',data:{labels:['Alto','Medio','Bajo'],datasets:[{data:d.imp,backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+c.parsed+'%';}}},TT)}}});
+  var nNoEnv=sumM(d.prog,m)-sumM(d.env,m),nNoEnt=sumM(d.env,m)-sumM(d.ent,m),nSinAdh=sumM(d.ent,m)-sumM(d.adh,m);
+  var nTotL=nNoEnv+nNoEnt+nSinAdh;
+  tx('n-noenv-v',fmtN(nNoEnv)); tx('n-noent-v',fmtN(nNoEnt)); tx('n-sinadh-v',fmtN(nSinAdh));
+  mkC('n-imp',{type:'doughnut',data:{labels:['No enviados','No entregados','Sin adherencia'],datasets:[{data:[nNoEnv,nNoEnt,nSinAdh],backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+fmtN(c.parsed)+(nTotL>0?' ('+(c.parsed/nTotL*100).toFixed(1)+'%)':'');}}},TT)}}});
 
   mkC('n-tln',{type:'line',data:{labels:D.mes,datasets:[
     {label:'Nivel entrega %',data:d.entRate,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:'#22c55e',borderWidth:2},
@@ -756,7 +753,10 @@ function applyRP(){
 
   mkC('r-zona',{type:'bar',data:{labels:D.zonas,datasets:[{label:'Entregados',data:d.zona,backgroundColor:D.zonas.map(function(_,i){return 'hsl('+(270+i*10)+',65%,60%)';}),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return fmtN(c.parsed.x)+' mensajes RP';}}},TT)},scales:{x:{grid:{color:GC},ticks:{callback:function(v){return v>=1000?(v/1000)+'k':v;}}},y:{grid:{display:false}}}}});
 
-  mkC('r-imp',{type:'doughnut',data:{labels:['Alto','Medio','Bajo'],datasets:[{data:d.imp,backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+c.parsed+'%';}}},TT)}}});
+  var rNoEnv=sumM(d.prog,m)-sumM(d.env,m),rNoEnt=sumM(d.env,m)-sumM(d.ent,m),rSinAdh=sumM(d.ent,m)-sumM(d.adh,m);
+  var rTotL=rNoEnv+rNoEnt+rSinAdh;
+  tx('r-noenv-v',fmtN(rNoEnv)); tx('r-noent-v',fmtN(rNoEnt)); tx('r-sinadh-v',fmtN(rSinAdh));
+  mkC('r-imp',{type:'doughnut',data:{labels:['No enviados','No entregados','Sin adherencia'],datasets:[{data:[rNoEnv,rNoEnt,rSinAdh],backgroundColor:['rgba(239,68,68,.8)','rgba(245,158,11,.8)','rgba(14,165,233,.8)'],borderColor:'#0d1829',borderWidth:3,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:Object.assign({callbacks:{label:function(c){return c.label+': '+fmtN(c.parsed)+(rTotL>0?' ('+(c.parsed/rTotL*100).toFixed(1)+'%)':'');}}},TT)}}});
 
   mkC('r-tln',{type:'line',data:{labels:D.mes,datasets:[
     {label:'Nivel entrega %',data:d.entRate,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:'#22c55e',borderWidth:2},
@@ -780,15 +780,147 @@ document.getElementById('NAV').addEventListener('click',function(e){
 });
 el('glo-rst').addEventListener('click',function(){el('glo-m').value='all';syncGlobal('all');});
 
+// ─── EXPORTAR EXCEL ──────────────────────────────────────────────────────────
+function exportExcel(){
+  if(typeof XLSX==='undefined'){alert('Librería cargando, intenta en 2 segundos.');return;}
+  var m=el('glo-m').value;
+  var mesNom=m==='all'?'Ene-Abr':D.mes[parseInt(m)];
+  var wb=XLSX.utils.book_new();
+  function p2(a,b){return b>0?parseFloat((a/b*100).toFixed(1)):0;}
+
+  // ── Hoja 1: Resumen General ──
+  var hdr=['Tipo','Mes','Programados','Enviados','% Envío','Entregados','% Entrega','Adherencia','% Adherencia','No Llegaron'];
+  var dat=[hdr];
+  var tipos=[{k:'eta',n:'ETA – Estimado de Arribo'},{k:'np',n:'No Planeados'},{k:'rp',n:'Replanificados'}];
+  tipos.forEach(function(t){
+    var d=D[t.k];
+    if(m==='all'){
+      D.mes.forEach(function(mes,i){
+        var prog=d.prog[i],env=d.env[i],ent=d.ent[i],adh=d.adh[i];
+        dat.push([t.n,mes,prog,env,p2(env,prog),ent,p2(ent,env),adh,p2(adh,env),env-ent]);
+      });
+      var tp=sumM(d.prog,'all'),te=sumM(d.env,'all'),tet=sumM(d.ent,'all'),ta=sumM(d.adh,'all');
+      dat.push([t.n,'TOTAL',tp,te,p2(te,tp),tet,p2(tet,te),ta,p2(ta,te),te-tet]);
+    } else {
+      var i=parseInt(m),prog=d.prog[i],env=d.env[i],ent=d.ent[i],adh=d.adh[i];
+      dat.push([t.n,D.mes[i],prog,env,p2(env,prog),ent,p2(ent,env),adh,p2(adh,env),env-ent]);
+    }
+    dat.push([]);
+  });
+  var ws1=XLSX.utils.aoa_to_sheet(dat);
+  ws1['!cols']=[{wch:26},{wch:8},{wch:13},{wch:12},{wch:10},{wch:13},{wch:10},{wch:13},{wch:14},{wch:13}];
+  XLSX.utils.book_append_sheet(wb,ws1,'Resumen');
+
+  // ── Hoja 2–4: detalle por tipo ──
+  function buildSheet(key,nom){
+    var d=D[key];
+    var rows=[[nom+' · '+mesNom+' 2026'],[],
+      ['Mes','Programados','Enviados','% Envío','Entregados','% Entrega','Adherencia','% Adh.','No Llegaron','Tasa Entrega %','Tasa Adh. %']];
+    var iList=m==='all'?[0,1,2,3]:[parseInt(m)];
+    iList.forEach(function(i){
+      rows.push([D.mes[i],d.prog[i],d.env[i],p2(d.env[i],d.prog[i]),d.ent[i],p2(d.ent[i],d.env[i]),d.adh[i],p2(d.adh[i],d.env[i]),d.env[i]-d.ent[i],d.entRate[i],d.adhRate[i]]);
+    });
+    if(m==='all'){
+      var tp=sumM(d.prog,'all'),te=sumM(d.env,'all'),tet=sumM(d.ent,'all'),ta=sumM(d.adh,'all');
+      rows.push(['TOTAL',tp,te,p2(te,tp),tet,p2(tet,te),ta,p2(ta,te),te-tet,'—','—']);
+    }
+    rows.push([],[],['Δ Distribución por Zona'],['Zona','Mensajes Entregados']);
+    D.zonas.forEach(function(z,i){rows.push([z,d.zona[i]]);});
+    var ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:10},{wch:13},{wch:12},{wch:10},{wch:13},{wch:10},{wch:13},{wch:10},{wch:13},{wch:14},{wch:14}];
+    return ws;
+  }
+  XLSX.utils.book_append_sheet(wb,buildSheet('eta','ETA – Estimado de Arribo'),'ETA');
+  XLSX.utils.book_append_sheet(wb,buildSheet('np','No Planeados'),'No Planeados');
+  XLSX.utils.book_append_sheet(wb,buildSheet('rp','Replanificados'),'Replanificados');
+
+  // ── Hoja 5: Zonas ──
+  var dz=[['Distribución por Zona · '+mesNom+' 2026'],[],['Zona','ETA','No Planeados','Replanificados','Total']];
+  D.zonas.forEach(function(z,i){dz.push([z,D.eta.zona[i],D.np.zona[i],D.rp.zona[i],D.eta.zona[i]+D.np.zona[i]+D.rp.zona[i]]);});
+  var wsZ=XLSX.utils.aoa_to_sheet(dz);
+  wsZ['!cols']=[{wch:16},{wch:12},{wch:14},{wch:16},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,wsZ,'Zonas');
+
+  XLSX.writeFile(wb,'LIS_ChatMasivo_DPO_'+mesNom+'_2026.xlsx');
+}
+
+// ─── EXPORTAR PDF ─────────────────────────────────────────────────────────────
+function exportPDF(){
+  var m=el('glo-m').value;
+  var mesNom=m==='all'?'Enero–Abril 2026':D.mes[parseInt(m)]+' 2026';
+  function p2s(a,b){return b>0?(a/b*100).toFixed(1)+'%':'0%';}
+  function buildRow(nom,d){
+    var prog=sumM(d.prog,m),env=sumM(d.env,m),ent=sumM(d.ent,m),adh=sumM(d.adh,m),nll=env-ent;
+    return '<tr><td>'+nom+'</td><td>'+fmtN(prog)+'</td><td>'+fmtN(env)+'</td><td>'+p2s(env,prog)+'</td><td>'+fmtN(ent)+'</td><td>'+p2s(ent,env)+'</td><td>'+fmtN(adh)+'</td><td>'+p2s(adh,env)+'</td><td>'+fmtN(nll)+'</td></tr>';
+  }
+  function buildDetail(nom,d){
+    var rows='',iList=m==='all'?[0,1,2,3]:[parseInt(m)];
+    iList.forEach(function(i){
+      rows+='<tr><td>'+D.mes[i]+'</td><td>'+fmtN(d.prog[i])+'</td><td>'+fmtN(d.env[i])+'</td><td>'+p2s(d.env[i],d.prog[i])+'</td><td>'+fmtN(d.ent[i])+'</td><td>'+p2s(d.ent[i],d.env[i])+'</td><td>'+fmtN(d.adh[i])+'</td><td>'+p2s(d.adh[i],d.env[i])+'</td><td>'+d.entRate[i]+'%</td><td>'+d.adhRate[i]+'%</td></tr>';
+    });
+    if(m==='all'){
+      var tp=sumM(d.prog,'all'),te=sumM(d.env,'all'),tet=sumM(d.ent,'all'),ta=sumM(d.adh,'all');
+      rows+='<tr class="tot"><td>TOTAL</td><td>'+fmtN(tp)+'</td><td>'+fmtN(te)+'</td><td>'+p2s(te,tp)+'</td><td>'+fmtN(tet)+'</td><td>'+p2s(tet,te)+'</td><td>'+fmtN(ta)+'</td><td>'+p2s(ta,te)+'</td><td>—</td><td>—</td></tr>';
+    }
+    return '<h3>'+nom+'</h3><table><thead><tr><th>Mes</th><th>Prog.</th><th>Enviados</th><th>%Env</th><th>Entregados</th><th>%Ent</th><th>Adh.</th><th>%Adh</th><th>Tasa Ent.</th><th>Tasa Adh.</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  }
+  var tpG=sumM(D.eta.prog,m)+sumM(D.np.prog,m)+sumM(D.rp.prog,m);
+  var teG=sumM(D.eta.env,m)+sumM(D.np.env,m)+sumM(D.rp.env,m);
+  var tetG=sumM(D.eta.ent,m)+sumM(D.np.ent,m)+sumM(D.rp.ent,m);
+  var taG=sumM(D.eta.adh,m)+sumM(D.np.adh,m)+sumM(D.rp.adh,m);
+  var doc='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>LIS ChatMasivo DPO – '+mesNom+'</title><style>'+
+    'body{font-family:Arial,sans-serif;font-size:11px;color:#111;margin:24px 28px;background:#fff}'+
+    'h1{font-size:17px;color:#1e3a5f;margin:0 0 4px}'+
+    'h2{font-size:13px;color:#1e3a5f;margin:22px 0 7px;border-left:3px solid #3b82f6;padding-left:8px}'+
+    'h3{font-size:12px;color:#1e40af;margin:18px 0 6px}'+
+    '.meta{font-size:10px;color:#6b7280;margin:0 0 18px;padding-bottom:10px;border-bottom:1px solid #e5e7eb}'+
+    'table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:10.5px;page-break-inside:avoid}'+
+    'th{background:#1e3a5f;color:#fff;padding:5px 7px;text-align:left;font-size:9.5px;letter-spacing:.3px}'+
+    'td{padding:4px 7px;border-bottom:1px solid #e5e7eb}'+
+    'tr:nth-child(even) td{background:#f8fafc}'+
+    'tr.gtot td{font-weight:700;background:#dbeafe;color:#1e3a5f}'+
+    'tr.tot td{font-weight:700;background:#eff6ff}'+
+    '.badge{display:inline-block;padding:1px 7px;border-radius:3px;font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;margin-left:8px}'+
+    '.foot{margin-top:28px;font-size:9px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:7px}'+
+    '@media print{@page{margin:14mm 12mm}}</style></head><body>'+
+    '<h1>LIS Chat Masivo &middot; Dashboard Operativo DPO 2026 <span class="badge">AUDITORÍA DPO</span></h1>'+
+    '<p class="meta">Período: <strong>'+mesNom+'</strong> &nbsp;|&nbsp; Generado: '+new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'})+' &nbsp;|&nbsp; A. Mauricio M. – Engineer DevOps</p>'+
+    '<h2>Resumen General &mdash; Todos los tipos de mensaje</h2>'+
+    '<table><thead><tr><th>Tipo</th><th>Programados</th><th>Enviados</th><th>% Envío</th><th>Entregados</th><th>% Entrega</th><th>Adherencia</th><th>% Adh.</th><th>No Llegaron</th></tr></thead><tbody>'+
+    buildRow('ETA – Estimado de Arribo',D.eta)+
+    buildRow('No Planeados',D.np)+
+    buildRow('Replanificados',D.rp)+
+    '<tr class="gtot"><td>TOTAL GENERAL</td><td>'+fmtN(tpG)+'</td><td>'+fmtN(teG)+'</td><td>'+p2s(teG,tpG)+'</td><td>'+fmtN(tetG)+'</td><td>'+p2s(tetG,teG)+'</td><td>'+fmtN(taG)+'</td><td>'+p2s(taG,teG)+'</td><td>'+fmtN(teG-tetG)+'</td></tr>'+
+    '</tbody></table>'+
+    buildDetail('ETA – Estimado de Arribo &middot; Detalle mensual',D.eta)+
+    buildDetail('No Planeados &middot; Detalle mensual',D.np)+
+    buildDetail('Replanificados &middot; Detalle mensual',D.rp)+
+    '<h2>Distribución por Zona Geográfica</h2>'+
+    '<table><thead><tr><th>Zona</th><th>ETA</th><th>No Planeados</th><th>Replanificados</th><th>Total</th></tr></thead><tbody>'+
+    D.zonas.map(function(z,i){return '<tr><td>'+z+'</td><td>'+fmtN(D.eta.zona[i])+'</td><td>'+fmtN(D.np.zona[i])+'</td><td>'+fmtN(D.rp.zona[i])+'</td><td><strong>'+fmtN(D.eta.zona[i]+D.np.zona[i]+D.rp.zona[i])+'</strong></td></tr>';}).join('')+
+    '</tbody></table>'+
+    '<p class="foot">LIS ChatMasivo &middot; Última Milla Antioquia &middot; Enero–Abril 2026 &middot; 87,302 mensajes operativos &middot; Documento generado automáticamente desde Dashboard DPO v3</p>'+
+    '</body></html>';
+
+  var win=window.open('','_blank','width=960,height=720');
+  if(!win){alert('Permite ventanas emergentes para este sitio y vuelve a intentarlo.');return;}
+  win.document.write(doc);
+  win.document.close();
+  win.focus();
+  setTimeout(function(){win.print();},700);
+}
+
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 applyG();applyETA();applyNP();applyRP();
 </script>
 <div class="lis-brand">
-  <div class="lis-brand-icon">LIS</div>
+  <div class="lis-brand-icon">AM</div>
   <div>
-    <div class="lis-brand-name">LIS ChatMasivo</div>
-    <div class="lis-brand-sub">Última Milla · Antioquia 2026</div>
+    <div class="lis-brand-name">A. MAURICIO M.</div>
+    <div class="lis-brand-sub">Engineer DevOps</div>
   </div>
 </div>
 </body>
 </html>
+                 
